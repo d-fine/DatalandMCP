@@ -1,0 +1,19 @@
+[project]
+name = "DatalandMCP"
+version = "0.1.0"
+description = "MCP Server for Dataland"
+authors = [
+    {name = "Andreas Hoecherl", email = "andreas.hoecherl@d-fine.com"},
+]
+dependencies = ["mcp[cli]>=1.10.0"]
+requires-python = ">=3.13"
+readme = "README.md"
+license = {text = "AGPL-3.0"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
