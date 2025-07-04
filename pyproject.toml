@@ -5,7 +5,13 @@ description = "MCP Server for Dataland"
 authors = [
     {name = "Andreas Hoecherl", email = "andreas.hoecherl@d-fine.com"},
 ]
-dependencies = ["mcp[cli]>=1.10.0"]
+dependencies = [
+    "mcp[cli]>=1.10.0",
+    "dataland-backend @ file:///${PROJECT_ROOT}/clients/backend",
+    "dataland-documents @ file:///${PROJECT_ROOT}/clients/documents",
+    "dataland-qa @ file:///${PROJECT_ROOT}/clients/qa",
+    "dataland-community @ file:///${PROJECT_ROOT}/clients/community",
+    "dataland-users @ file:///${PROJECT_ROOT}/clients/users"]
 requires-python = ">=3.13"
 readme = "README.md"
 license = {text = "AGPL-3.0"}
