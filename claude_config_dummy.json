@@ -1,0 +1,16 @@
+{
+    "mcpServers": {
+    "DatalandMCP": {
+      "command": "{project_root_dir}\\.venv\\Scripts\\python.exe",
+      "args": [
+        "{project_root_dir}\\src\\datalandmcp\\mcp_server.py"
+      ],
+      "env": {
+	"DATALAND_MCP_ROOT_DIR": "",
+	"DATALAND_QARG_ROOT_DIR": "",
+	"DATALAND_TEST_API_KEY": "",
+	"DATALAND_API_KEY": ""
+      }
+    }
+  }
+}
