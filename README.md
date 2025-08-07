@@ -4,8 +4,8 @@ This repository contains an MCP Server which allows LLMs to access data from Dat
 
 ## Table of contents
 - [Prerequisites](#prerequisites-)
-- [Dataland Client](#dataland-client-)
-  - [Installation](#installation)
+- [Installation](#installation)
+  - [Dataland Client](#dataland-client)
   - [Pyhon MCP SDK](#python-mcp-sdk)
 - [Open WebUI](#open-webui)
   - [Installation](#installation-1)
@@ -23,7 +23,7 @@ This repository contains an MCP Server which allows LLMs to access data from Dat
 - Create a personal account on https://dataland.com and https://test.dataland.com
  
 ## Installation
-Clone this repository to a designated folder via `git clone`
+Clone this repository to a designated folder via `git clone`.
 
 ### Dataland Client
 - Create a `.env` file at the project root based on the `.env_dummy` file. Set Variable `DATALAND_MCP_ROOT_DIR` to the repository root on your machine and `DATALAND_API_KEY` with your API KEY that you can create as described [here](https://github.com/d-fine/Dataland/wiki/Use-the-API).
