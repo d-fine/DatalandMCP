@@ -3,7 +3,7 @@
 This repository contains an MCP Server which allows LLMs to access data from Dataland.
 
 ## Table of contents
-- [Prerequisites](#prerequisites-)
+- [Prerequisites](#prerequisites)
 - [Installation](#installation)
   - [Dataland Client](#dataland-client)
   - [Pyhon MCP SDK](#python-mcp-sdk)
@@ -15,7 +15,7 @@ This repository contains an MCP Server which allows LLMs to access data from Dat
   - [Installation and Launch](#installation-and-launch)
   - [Connect to Open WebUI](#connect-to-open-webui)
 
-## Prerequisites 
+## Prerequisites
 - Have Python 3.11 or 3.12 installed
 - Have [PDM installed](https://pdm-project.org/latest/) on your machine (In Windows open Command Prompt execute the following command to download PDM: powershell -ExecutionPolicy ByPass -c "irm https://pdm-project.org/install-pdm.py | py -" Restart PC afterwards)
 - Have java installed (if you have attended the d-fine Basic IT training during onboarding you should already have it). It is recommended to use the [IntelliJ IdeA Community Edition](https://www.jetbrains.com/idea/download/?section=windows).
