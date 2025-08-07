@@ -64,7 +64,7 @@ Go to _Profile -> Admin Panel -> Settings -> Connections -> OpenAI API -> +_:
 
 <img width="462" height="418" alt="Image" src="https://github.com/user-attachments/assets/5e7e714e-6e7c-4e06-b1ec-91b42c1a9ff3" />
 
-In the above screenshot _[resource_name]_, _[deployment_name]_, _[API_KEY]_ and [API_VERSION] has to be replaced by the correct names defined in your Azure OpenAI resource.
+In the above screenshot _[resource_name]_, _[deployment_name]_, _[API_KEY]_ and [API_VERSION] has to be replaced by the correct values defined in your Azure OpenAI resource.
 The deployment name is the given name of the deployed model within the resource (e.g. _d-fine_azure_gpt-4.1_).
 
 You should now be able to see the deployed model in the list of available models and chat with it:
