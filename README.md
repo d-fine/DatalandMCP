@@ -4,7 +4,7 @@ This repository contains an MCP Server which allows LLMs to access data from Dat
 
 ## Table of contents
 - [Prerequisites](#prerequisites-)
-- [Datalan Client](#dataland-client-)
+- [Dataland Client](#dataland-client-)
   - [Installation](#installation)
   - [Pyhon MCP SDK](#python-mcp-sdk)
 - [Open WebUI](#open-webui)
