@@ -2,6 +2,12 @@
 
 This repository contains an MCP Server which connects Clients like Claude to Dataland.
 
+## Table of contents
+- [Prerequisites](#prerequisites-)
+- [Installation](#installation-)
+  - [Dataland Client](#dataland-client)
+  - [Pyhon MCP SDK](#python-mcp-sdk)
+
 ### Prerequisites 
 - Have a current Python version (>=3.10) installed
 - Have [PDM installed](https://pdm-project.org/latest/) on your machine (In Windows open Command Prompt execute the following command to download PDM: powershell -ExecutionPolicy ByPass -c "irm https://pdm-project.org/install-pdm.py | py -" Restart PC afterwards)
@@ -19,7 +25,7 @@ This repository contains an MCP Server which connects Clients like Claude to Dat
 
 ## MCP Clients & Azure OpenAI
 
-## Open WebUI (recommended)
+## Open WebUI
 
 [Open WebUI](https://github.com/open-webui/open-webui) allows user to run local LLMs but connects to cloud based OpenAIs.
 
@@ -30,7 +36,7 @@ To install openwebui, create a virtual environment, activate it and run the comm
 ### Launch
 
 To launch the app run the command `open-webui serve` within the venv.
-After successful launch we can now open the UI via http://localhost:8080
+After successful launch we can now open the UI via http://localhost:8080. For now, no model is connected to the UI; hence we will connect a model via Azure OpenAI.
 
 <img width="1904" height="907" alt="Image" src="https://github.com/user-attachments/assets/de16630b-c70f-45d4-87ea-d6f4bfd91f5e" />
 
@@ -45,15 +51,17 @@ Go to _Profile -> Admin Panel -> Settings -> Connections -> +_:
 
 <img width="462" height="423" alt="Image" src="https://github.com/user-attachments/assets/4f30b1a1-6637-4d4c-bd0b-5561868c4098" />
 
-In the above screenshot _[resource_name]_, _[deployment_name]_ and _[api_key]_ has to be replaced by the correct names defined in Azure.
-If everything is correct you should now be able to see the deployed model in the list of available models:
+In the above screenshot _[resource_name]_, _[deployment_name]_ and _[api_key]_ has to be replaced by the correct names defined in your Azure OpenAI resource.
+The deployment name is the given name of the deployed model within the resource (e.g. _d-fine_azure_gpt-4.1_).
+
+You should now be able to see the deployed model in the list of available models:
 
 <img width="513" height="226" alt="Image" src="https://github.com/user-attachments/assets/7abca8c4-64df-41ee-bcba-eaae4c2d01da" />
 
 ## Connecting MCP Servers with mcpo
 
 MCPO exposes any MCP Tool as an OpenAPI-compatible HTTP server. This is needed in our case. \
-**Note:** Resources (Templates) and Prompts are yet not implemented in mcpo but there is are open Pull Requests regarding Resources: [MCPO - Pull Requests](https://github.com/open-webui/mcpo/pulls)
+(**Note:** Resources (Templates) and Prompts are yet not implemented in mcpo but there is are open Pull Requests regarding Resources: [MCPO - Pull Requests](https://github.com/open-webui/mcpo/pulls))
 
 ### Installation and Launch
 
