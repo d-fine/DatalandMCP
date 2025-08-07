@@ -1,36 +1,116 @@
 # DatalandMCP
 
-This repository contains an MCP Server which connects Clients like Claude to Dataland.
+This repository contains an MCP Server which allows LLMs to access data from Dataland.
 
-### Prerequisites 
-- Have a current Python version (>=3.10) installed
+## Table of contents
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+  - [Dataland Client](#dataland-client)
+  - [Pyhon MCP SDK](#python-mcp-sdk)
+- [Open WebUI](#open-webui)
+  - [Installation](#installation-1)
+  - [Launch](#launch)
+  - [Connect with Azure OpenAI](#connect-with-azure-openai)
+- [Run MCP Servers via mcpo](#run-mcp-servers-via-mcpo)
+  - [Installation and Launch](#installation-and-launch)
+  - [Connect to Open WebUI](#connect-to-open-webui)
+
+## Prerequisites
+- Have Python 3.11 or 3.12 installed
 - Have [PDM installed](https://pdm-project.org/latest/) on your machine (In Windows open Command Prompt execute the following command to download PDM: powershell -ExecutionPolicy ByPass -c "irm https://pdm-project.org/install-pdm.py | py -" Restart PC afterwards)
 - Have java installed (if you have attended the d-fine Basic IT training during onboarding you should already have it). It is recommended to use the [IntelliJ IdeA Community Edition](https://www.jetbrains.com/idea/download/?section=windows).
-- Have Visual Studio Code installed: https://code.visualstudio.com/Download
+- Have [Visual Studio Code](https://code.visualstudio.com/Download) or [PyCharm Community Edition](https://www.jetbrains.com/pycharm/?msclkid=3f565bed393b11c2a1203379aceeab9a&utm_source=bing&utm_medium=cpc&utm_campaign=EMEA_en_DE_PyCharm_Search&utm_term=python%20coding%20tool&utm_content=python%20coding%20tool) installed.
 - Create a personal account on https://dataland.com and https://test.dataland.com
+ 
+## Installation
+Clone this repository to a designated folder via `git clone`.
 
-## Installation 
 ### Dataland Client
-- Create a `.env` file at root based on the `.env_dummy` file. Set Variable `DATALAND_MCP_ROOT_DIR` to the repository root on your machine and `DATALAND_API_KEY` with your API KEY that you can create as described [here](https://github.com/d-fine/Dataland/wiki/Use-the-API).
-- Execute `./bin/setup_dev_environment.sh` using a Git Bash shell
+- Create a `.env` file at the project root based on the `.env_dummy` file. Set Variable `DATALAND_MCP_ROOT_DIR` to the repository root on your machine and `DATALAND_API_KEY` with your API KEY that you can create as described [here](https://github.com/d-fine/Dataland/wiki/Use-the-API).
+- Execute `.\bin\setup_dev_environment.sh` using a Git Bash shell from your repository root.
 
 ### Python MCP SDK
-- Install [Python MCP SDK](https://github.com/modelcontextprotocol/python-sdk?tab=readme-ov-file#installation) and add to the virtual environment (this can be done by installing the package within the venv)
+This repository utilizes the [Python MCP SDK](https://github.com/modelcontextprotocol/python-sdk?tab=readme-ov-file#installation) package. It should be installed already by the previous step. If not, install manually within the venv.
+Check if the mcp package can be found under `.\.venv\Lib\site-packages\`
+## Open WebUI
 
-### MCP Client - Claude Desktop
-- In order to use the server we need an MCP Client like [Claude Desktop](https://claude.ai/download)
-- Install it on your local machine and create an account
+[Open WebUI](https://github.com/open-webui/open-webui) is an MCP Client that allows user to run local LLMs as well as cloud based OpenAIs.
 
-## Configuration
-### Claude Desktop
-- Now to connect Claude to the MCP Server we need to set up the configuration file `claude_desktop_config.json`
-- The location of the config file can be found via the Claude Desktop Application: `Menu` -> `File` -> `Settings` -> `Developer` -> `Edit Config`
-- Paste the content of `claude_config_dummy.json` into the file
-  - `{project_root_dir}` has to be replaced by the repository root
-  - The environmental variables have to be pasted from the `.env` file
-- Save the config file and restart the Claude Desktop Application to apply the changes
+### Installation
+- Open Powershell to install Open WebUI
+- Choose a designated folder and from there create a virtual environment via `python -m venv .\venv`. **Note, that it is only compatible with Python 3.11 & 3.12.**
+- Activate it via `venv\Scripts\activate`
+- Run the command `pip install open-webui`.
 
-After successful configuration the MCP Server should be shown as running under `Menu` -> `File` -> `Settings` -> `Developer`.
 
-## Desktop Extensions
-### TBA
+### Launch
+
+- Run the command `open-webui serve` within the venv.
+- After successful launch we can now open the UI via http://localhost:8080. 
+- Create an Open WebUI account.
+
+For now, no model is connected to the UI; hence we will connect a model via Azure OpenAI.
+
+<img width="1904" height="907" alt="Image" src="https://github.com/user-attachments/assets/de16630b-c70f-45d4-87ea-d6f4bfd91f5e" />
+
+**Optional (Recommended):** 
+Open WebUI support Xet storages, which avoids downloading files and models at every launch of the application, causing slow startups.
+To use this functionality download the hf_xet package via `pip install hf_xet`
+
+### Connect with Azure OpenAI
+
+Open WebUI supports Azure OpenAI to connect the cloud based LLM.
+Go to _Profile -> Admin Panel -> Settings -> Connections -> OpenAI API -> +_:
+
+<img width="462" height="418" alt="Image" src="https://github.com/user-attachments/assets/5e7e714e-6e7c-4e06-b1ec-91b42c1a9ff3" />
+
+In the above screenshot _[resource_name]_, _[deployment_name]_, _[API_KEY]_ and [API_VERSION] has to be replaced by the correct values defined in your Azure OpenAI resource.
+The deployment name is the given name of the deployed model within the resource (e.g. _d-fine_azure_gpt-4.1_).
+
+You should now be able to see the deployed model in the list of available models and chat with it:
+
+<img width="513" height="226" alt="Image" src="https://github.com/user-attachments/assets/7abca8c4-64df-41ee-bcba-eaae4c2d01da" />
+
+## Run MCP Servers via mcpo
+
+MCPO exposes any MCP Tool as an OpenAPI-compatible HTTP server. This is needed in our case. \
+(**Note:** Resources (Templates) and Prompts are yet not implemented in mcpo but there is are open Pull Requests regarding Resources: [MCPO - Pull Requests](https://github.com/open-webui/mcpo/pulls))
+
+### Installation and Launch
+
+MCPO requires Python3.8+ and can be installed via `pip install mcpo`\
+After successful installation you can set up a config file in the same format as for Claude Desktop or Cursor.
+
+**Config Template:**
+```
+{
+    "mcpServers": {
+        "DatalandMCP": {
+            "type": "stdio",
+            "command": "path_to_dataland_venv\\Scripts\\python.exe",
+            "args": ["path_to_server\\mcp_server.py", "stdio"],
+            "env": {
+              "DATALAND_MCP_ROOT_DIR": "",
+              "DATALAND_QARG_ROOT_DIR": "",
+              "DATALAND_API_KEY": ""
+          }
+        }
+    },
+    "port": 8000
+}
+```
+
+Within Powershell, launch the server via `mcpo --config mcp.json --port 8000 --host localhost`.
+
+Now the server should be running. Its documentation (Swagger UI) should now be accessible via http://localhost:8000/DatalandMCP/docs.
+
+### Connect to Open WebUI
+
+Within Open WebUI you can now add the running server via `Profile -> Settings -> Tools -> +`:
+
+<img width="453" height="240" alt="Image" src="https://github.com/user-attachments/assets/e09cbbd7-a3e6-4680-b89a-f93dad9d2bc8" />
+
+Now the tools of the MCP Server are available in the chat via a toolbox under the input field:
+
+<img width="658" height="327" alt="Image" src="https://github.com/user-attachments/assets/c7531e03-e0db-4994-b94d-ebdb171013cb" />
+
