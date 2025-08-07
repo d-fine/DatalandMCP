@@ -16,15 +16,17 @@ This repository contains an MCP Server which allows LLMs to access data from Dat
   - [Connect to Open WebUI](#connect-to-open-webui)
 
 ## Prerequisites 
-- Have a current Python version (>=3.10) installed
+- Have Python 3.11 or 3.12 installed
 - Have [PDM installed](https://pdm-project.org/latest/) on your machine (In Windows open Command Prompt execute the following command to download PDM: powershell -ExecutionPolicy ByPass -c "irm https://pdm-project.org/install-pdm.py | py -" Restart PC afterwards)
 - Have java installed (if you have attended the d-fine Basic IT training during onboarding you should already have it). It is recommended to use the [IntelliJ IdeA Community Edition](https://www.jetbrains.com/idea/download/?section=windows).
-- Have Visual Studio Code installed: https://code.visualstudio.com/Download
+- Have [Visual Studio Code](https://code.visualstudio.com/Download) or [PyCharm Community Edition](https://www.jetbrains.com/pycharm/?msclkid=3f565bed393b11c2a1203379aceeab9a&utm_source=bing&utm_medium=cpc&utm_campaign=EMEA_en_DE_PyCharm_Search&utm_term=python%20coding%20tool&utm_content=python%20coding%20tool) installed.
 - Create a personal account on https://dataland.com and https://test.dataland.com
+ 
+## Installation
+Clone this repository to a designated folder via `git clone`
 
-## Dataland Client 
-### Installation
-- Create a `.env` file at root based on the `.env_dummy` file. Set Variable `DATALAND_MCP_ROOT_DIR` to the repository root on your machine and `DATALAND_API_KEY` with your API KEY that you can create as described [here](https://github.com/d-fine/Dataland/wiki/Use-the-API).
+### Dataland Client
+- Create a `.env` file at the project root based on the `.env_dummy` file. Set Variable `DATALAND_MCP_ROOT_DIR` to the repository root on your machine and `DATALAND_API_KEY` with your API KEY that you can create as described [here](https://github.com/d-fine/Dataland/wiki/Use-the-API).
 - Execute `./bin/setup_dev_environment.sh` using a Git Bash shell
 
 ### Python MCP SDK
@@ -35,13 +37,16 @@ This repository contains an MCP Server which allows LLMs to access data from Dat
 [Open WebUI](https://github.com/open-webui/open-webui) is an MCP Client that allows user to run local LLMs as well as cloud based OpenAIs.
 
 ### Installation
-To install Open WebUI, create a virtual environment, activate it and run the command `pip install open-webui`.\
-**Note, that it is only compatible with Python 3.11 & 3.12.**
+- Open Powershell to install Open WebUI
+- Choose a designated folder and create a virtual environment via `python -m venv /path/to/new/virtual/environment`. **Note, that it is only compatible with Python 3.11 & 3.12.**
+- Activate it via `venv\Scripts\activate`
+- Run the command `pip install open-webui`.
+
 
 ### Launch
 
-To launch the app run the command `open-webui serve` within the venv.
-After successful launch we can now open the UI via http://localhost:8080. For now, no model is connected to the UI; hence we will connect a model via Azure OpenAI.
+- Run the command `open-webui serve` within the venv.
+- After successful launch we can now open the UI via http://localhost:8080. For now, no model is connected to the UI; hence we will connect a model via Azure OpenAI.
 
 <img width="1904" height="907" alt="Image" src="https://github.com/user-attachments/assets/de16630b-c70f-45d4-87ea-d6f4bfd91f5e" />
 
