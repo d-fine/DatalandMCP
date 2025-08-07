@@ -27,18 +27,18 @@ Clone this repository to a designated folder via `git clone`.
 
 ### Dataland Client
 - Create a `.env` file at the project root based on the `.env_dummy` file. Set Variable `DATALAND_MCP_ROOT_DIR` to the repository root on your machine and `DATALAND_API_KEY` with your API KEY that you can create as described [here](https://github.com/d-fine/Dataland/wiki/Use-the-API).
-- Execute `./bin/setup_dev_environment.sh` using a Git Bash shell
+- Execute `.\bin\setup_dev_environment.sh` using a Git Bash shell from your repository root.
 
 ### Python MCP SDK
-- This repository utilizes the [Python MCP SDK](https://github.com/modelcontextprotocol/python-sdk?tab=readme-ov-file#installation) package. It should be installed already by the previous step. If not, install manually within the venv.
-
+This repository utilizes the [Python MCP SDK](https://github.com/modelcontextprotocol/python-sdk?tab=readme-ov-file#installation) package. It should be installed already by the previous step. If not, install manually within the venv.
+Check if the mcp package can be found under `.\.venv\Lib\site-packages\`
 ## Open WebUI
 
 [Open WebUI](https://github.com/open-webui/open-webui) is an MCP Client that allows user to run local LLMs as well as cloud based OpenAIs.
 
 ### Installation
 - Open Powershell to install Open WebUI
-- Choose a designated folder and create a virtual environment via `python -m venv /path/to/new/virtual/environment`. **Note, that it is only compatible with Python 3.11 & 3.12.**
+- Choose a designated folder and from there create a virtual environment via `python -m venv .\venv`. **Note, that it is only compatible with Python 3.11 & 3.12.**
 - Activate it via `venv\Scripts\activate`
 - Run the command `pip install open-webui`.
 
@@ -46,7 +46,10 @@ Clone this repository to a designated folder via `git clone`.
 ### Launch
 
 - Run the command `open-webui serve` within the venv.
-- After successful launch we can now open the UI via http://localhost:8080. For now, no model is connected to the UI; hence we will connect a model via Azure OpenAI.
+- After successful launch we can now open the UI via http://localhost:8080. 
+- Create an Open WebUI account.
+
+For now, no model is connected to the UI; hence we will connect a model via Azure OpenAI.
 
 <img width="1904" height="907" alt="Image" src="https://github.com/user-attachments/assets/de16630b-c70f-45d4-87ea-d6f4bfd91f5e" />
 
@@ -57,14 +60,14 @@ To use this functionality download the hf_xet package via `pip install hf_xet`
 ### Connect with Azure OpenAI
 
 Open WebUI supports Azure OpenAI to connect the cloud based LLM.
-Go to _Profile -> Admin Panel -> Settings -> Connections -> +_:
+Go to _Profile -> Admin Panel -> Settings -> Connections -> OpenAI API -> +_:
 
-<img width="462" height="423" alt="Image" src="https://github.com/user-attachments/assets/4f30b1a1-6637-4d4c-bd0b-5561868c4098" />
+<img width="462" height="418" alt="Image" src="https://github.com/user-attachments/assets/5e7e714e-6e7c-4e06-b1ec-91b42c1a9ff3" />
 
-In the above screenshot _[resource_name]_, _[deployment_name]_ and _[api_key]_ has to be replaced by the correct names defined in your Azure OpenAI resource.
+In the above screenshot _[resource_name]_, _[deployment_name]_, _[API_KEY]_ and [API_VERSION] has to be replaced by the correct names defined in your Azure OpenAI resource.
 The deployment name is the given name of the deployed model within the resource (e.g. _d-fine_azure_gpt-4.1_).
 
-You should now be able to see the deployed model in the list of available models:
+You should now be able to see the deployed model in the list of available models and chat with it:
 
 <img width="513" height="226" alt="Image" src="https://github.com/user-attachments/assets/7abca8c4-64df-41ee-bcba-eaae4c2d01da" />
 
@@ -84,8 +87,8 @@ After successful installation you can set up a config file in the same format as
     "mcpServers": {
         "DatalandMCP": {
             "type": "stdio",
-            "command": "path_to_dataland_venv\\Scirpts\\python.exe",
-            "args": ["path_to_server\\server.py", "stdio"],
+            "command": "path_to_dataland_venv\\Scripts\\python.exe",
+            "args": ["path_to_server\\mcp_server.py", "stdio"],
             "env": {
               "DATALAND_MCP_ROOT_DIR": "",
               "DATALAND_QARG_ROOT_DIR": "",
