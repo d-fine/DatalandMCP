@@ -7,12 +7,15 @@ authors = [
 ]
 dependencies = [
     "mcp[cli]>=1.10.0",
+    "open-webui>=0.6.18",
     "dataland-backend @ file:///${PROJECT_ROOT}/clients/backend",
     "dataland-documents @ file:///${PROJECT_ROOT}/clients/documents",
     "dataland-qa @ file:///${PROJECT_ROOT}/clients/qa",
     "dataland-community @ file:///${PROJECT_ROOT}/clients/community",
-    "dataland-users @ file:///${PROJECT_ROOT}/clients/users"]
-requires-python = ">=3.13"
+    "dataland-users @ file:///${PROJECT_ROOT}/clients/users",
+    "hf-xet>=1.1.7",
+    "mcpo>=0.0.1"]
+requires-python = "==3.11"
 readme = "README.md"
 license = {text = "AGPL-3.0"}
 

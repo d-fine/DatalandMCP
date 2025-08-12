@@ -162,3 +162,5 @@ cython_debug/
 #.idea/
 
 clients/
+.webui_secret_key
+mcp.json
