@@ -13,7 +13,11 @@ from mcp.server.fastmcp.prompts import base
 
 from datalandmcp.dataland_client import PRODUCTION_INSTANCE, DatalandClient
 from dataland_backend.models.sfdr_data import SfdrData
+from dataland_backend.models.eutaxonomy_financials_data import EutaxonomyFinancialsData
+from dataland_backend.models.eutaxonomy_non_financials_data import EutaxonomyNonFinancialsData
+from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
 from dataland_backend.models.data_type_enum import DataTypeEnum
+from dataland_backend.models.qa_status import QaStatus
 
 DatalandClient.set_global_client(PRODUCTION_INSTANCE.client)
 client=DatalandClient.get_global_client()
@@ -28,7 +32,7 @@ REPORT_DISPATCH = {
     DataTypeEnum.NUCLEAR_MINUS_AND_MINUS_GAS: client.eu_taxonomy_nuclear_gas_api.get_all_company_nuclear_and_gas_data,
 }
 
-def get_company_id(company_name: str):
+def get_company_id(company_name: str) -> str:
     """
     Fetches the Dataland internal company identifier for a given company name.
 
@@ -38,7 +42,7 @@ def get_company_id(company_name: str):
     :raises Exception: If no company was found or an unexpected error ocurred.
     """
     try:
-        company_data = client.company_api.get_companies(search_string=company_name, data_types=[DataTypeEnum.SFDR])
+        company_data = client.company_api.get_companies(search_string=company_name)
     except Exception as exc:
         raise Exception(f'Error retrieving company data for {company_name}: {str(exc)}!')
     if not company_data:
@@ -46,7 +50,10 @@ def get_company_id(company_name: str):
     else:
         return company_data[0].company_id
 
-def get_report_data(company_name: str, reporting_period: str, data_type: DataTypeEnum):
+def get_report_data(
+        company_name: str,
+        reporting_period: str,
+        data_type: DataTypeEnum) -> Union[SfdrData, EutaxonomyFinancialsData, EutaxonomyNonFinancialsData, NuclearAndGasData]:
     """
     Fetches the Dataland reports data for a given company name, reporting period and data framework (SFDR, EU Taxonomy,...).
     Calls the respective GET-Endpoint of Dataland API via the REPORT_DISPATCH.
@@ -73,6 +80,36 @@ def get_report_data(company_name: str, reporting_period: str, data_type: DataTyp
 
 ## MCP TOOLS
 
+@dataland_mcp.tool(name="Company_Available_Reports")
+def get_company_available_reports(company_name: str):
+    """
+    Retrieves a list of the available reports and its metadata for a given company.
+    It contains the active and accepted reports of all available frameworks and reporting periods.
+
+    :param company_name: Name of the company for which the SFDR report is retrieved, e.g. "BASF SE".
+
+    :return: Returns a list of DataMetaInformation Objects of the available reports.
+    :raises Exception: If no company or report was found or an unexpected error ocurred.
+    """
+    try:
+        company_id = get_company_id(company_name=company_name)
+    except Exception as exc:
+        return str(exc)
+    else:
+        try:
+            meta_data = client.meta_api.get_list_of_data_meta_info(
+                company_id=company_id,
+                show_only_active=True,
+                qa_status=QaStatus.ACCEPTED)
+        except Exception as exc:
+            raise Exception(exc)
+    if not meta_data:
+        raise Exception(
+            f'No meta information was found for the company {company_name} in Dataland!')
+    else:
+        return meta_data
+
+
 @dataland_mcp.tool(name="SFDR_Report")
 def get_sfdr_report(company_name: str, reporting_period: str):# -> Union[SfdrData, str]:
     """
@@ -84,6 +121,7 @@ def get_sfdr_report(company_name: str, reporting_period: str):# -> Union[SfdrDat
     :param reporting_period: The fiscal year of the SFDR report as a string, e.g. "2024".
 
     :return: The SFDR data for the given company name and reporting period if found, otherwise an Exception string.
+    :raises Exception: If no company or report was found or an unexpected error ocurred.
     """
     try:
         sfdr_data = get_report_data(
@@ -103,12 +141,12 @@ def get_eu_fin_taxonomy_data(company_name: str, reporting_period: str):# -> List
     reporting period from Dataland. It encompasses disclosures on how financial products manage
     environmental, social, and governance (ESG) risks and adverse sustainability impacts.
 
-
     :param company_name: Name of the financial company for which the Taxonomy report is retrieved, e.g. "Allianz SE".
     :param reporting_period: The fiscal year of the Taxonomy report as a string, e.g. "2024".
 
     :return: The financial Taxonomy data for the given company name and reporting period if found,
     otherwise an Exception string.
+    :raises Exception: If no company or report was found or an unexpected error ocurred.
     """
     try:
         tax_fin_data = get_report_data(
@@ -134,6 +172,7 @@ def get_eu_nf_taxonomy_data(company_name: str, reporting_period: str):# -> List[
 
     :return: The non-financial Taxonomy data for the given company name and reporting period if found,
     otherwise an Exception string.
+    :raises Exception: If no company or report was found or an unexpected error ocurred.
     """
     try:
         tax_nf_data = get_report_data(
@@ -158,6 +197,7 @@ def get_eu_nulear_gas_taxonomy_data(company_name: str, reporting_period: str):# 
 
     :return: The nuclear and gas Taxonomy data for the given company name and reporting period if found,
     otherwise an Exception string.
+    :raises Exception: If no company or report was found or an unexpected error ocurred.
     """
     try:
         tax_nuclear_gas_data = get_report_data(
