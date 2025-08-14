@@ -5,7 +5,7 @@ It has to be run by the MCP Client.
 
 __version__ = '0.0.1'
 
-from typing import List, Union
+from typing import List, Union, Dict
 from pydantic import BaseModel
 
 from mcp.server.fastmcp import FastMCP
@@ -50,10 +50,22 @@ def get_company_id(company_name: str) -> str:
     else:
         return company_data[0].company_id
 
+def construct_data_url(company_id: str, reporting_period: str, data_type: DataTypeEnum):
+    """
+    Construct a link to the Dataland website which should be provided as a source of the retrieved reports.
+
+    :param company_id: The unique identifier of a company used in Dataland.
+    :param reporting_period: The fiscal year of the published report as a string, e.g. "2024".
+    :param data_type: The type of reporting framework, e.g. DataTypeEnum.SFDR.
+
+    :return: Constructed Dataland URL of the given company, data framework and reporting period.
+    """
+    return f'https://dataland.com/companies/{company_id}/frameworks/{data_type.value}/reportingPeriods/{reporting_period}'
+
 def get_report_data(
         company_name: str,
         reporting_period: str,
-        data_type: DataTypeEnum) -> Union[SfdrData, EutaxonomyFinancialsData, EutaxonomyNonFinancialsData, NuclearAndGasData]:
+        data_type: DataTypeEnum) -> Dict[str, Union[SfdrData, EutaxonomyFinancialsData, EutaxonomyNonFinancialsData, NuclearAndGasData]]:
     """
     Fetches the Dataland reports data for a given company name, reporting period and data framework (SFDR, EU Taxonomy,...).
     Calls the respective GET-Endpoint of Dataland API via the REPORT_DISPATCH.
@@ -62,21 +74,32 @@ def get_report_data(
     :param reporting_period: The fiscal year of the published report as a string, e.g. "2024".
     :param data_type: The type of reporting framework, e.g. DataTypeEnum.SFDR.
 
-    :return: The report data for the given company name, reporting period and data framework.
+    :return: The report data and source URL for the given company name, reporting period and data framework.
     :raises Exception: If no company or report was found or an unexpected error ocurred.
     """
     try:
         company_id = get_company_id(company_name=company_name)
     except Exception as exc:
         raise Exception(exc)
+
     try:
         report_data = REPORT_DISPATCH[data_type](company_id=company_id, reporting_period=reporting_period)
     except Exception as exc:
         raise Exception(exc)
+
     if not report_data:
-        raise Exception(f'No {data_type.value} data was found for reporting period {reporting_period} for company {company_name} in Dataland!')
+        raise Exception(
+            f'No {data_type.value} data was found for reporting period '
+            f'{reporting_period} for company {company_name} in Dataland!'
+        )
     else:
-        return report_data
+        data_url = construct_data_url(
+            company_id=company_id,
+            reporting_period=reporting_period,
+            data_type=data_type
+        )
+        return {"data_url": data_url, "report_data": report_data}
+
 
 ## MCP TOOLS
 
