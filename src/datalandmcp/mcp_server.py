@@ -111,7 +111,7 @@ def get_company_available_reports(company_name: str):
 
     :param company_name: Name of the company for which the SFDR report is retrieved, e.g. "BASF SE".
 
-    :return: Returns a list of DataMetaInformation Objects of the available reports.
+    :return: Returns a list of data types and reporting periods of the available reports.
     :raises Exception: If no company or report was found or an unexpected error ocurred.
     """
     try:
@@ -130,7 +130,13 @@ def get_company_available_reports(company_name: str):
         raise Exception(
             f'No meta information was found for the company {company_name} in Dataland!')
     else:
-        return meta_data
+        available_reports = []
+        for report in meta_data:
+            available_reports.append({
+                    "dataType": report.data_type,
+                    "reportingPeriod": report.reporting_period,
+            })
+        return available_reports
 
 
 @dataland_mcp.tool(name="SFDR_Report")
