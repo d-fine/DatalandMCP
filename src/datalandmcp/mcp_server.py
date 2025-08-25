@@ -5,7 +5,7 @@ It has to be run by the MCP Client.
 
 __version__ = '0.0.1'
 
-from typing import List, Union
+from typing import List, Union, Dict
 from pydantic import BaseModel
 
 from mcp.server.fastmcp import FastMCP
@@ -13,209 +13,229 @@ from mcp.server.fastmcp.prompts import base
 
 from datalandmcp.dataland_client import PRODUCTION_INSTANCE, DatalandClient
 from dataland_backend.models.sfdr_data import SfdrData
+from dataland_backend.models.eutaxonomy_financials_data import EutaxonomyFinancialsData
+from dataland_backend.models.eutaxonomy_non_financials_data import EutaxonomyNonFinancialsData
+from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
 from dataland_backend.models.data_type_enum import DataTypeEnum
+from dataland_backend.models.qa_status import QaStatus
 
 DatalandClient.set_global_client(PRODUCTION_INSTANCE.client)
 client=DatalandClient.get_global_client()
 
 # Create an MCP server
-mcp = FastMCP("DatalandMCP")
+dataland_mcp = FastMCP("DatalandMCP")
 
-## Helper Functions
+REPORT_DISPATCH = {
+    DataTypeEnum.SFDR: client.sfdr_api.get_all_company_sfdr_data,
+    DataTypeEnum.EUTAXONOMY_MINUS_FINANCIALS: client.eu_taxonomy_fin_api.get_all_company_eutaxonomy_financials_data,
+    DataTypeEnum.EUTAXONOMY_MINUS_NON_MINUS_FINANCIALS: client.eu_taxonomy_nf_api.get_all_company_eutaxonomy_non_financials_data,
+    DataTypeEnum.NUCLEAR_MINUS_AND_MINUS_GAS: client.eu_taxonomy_nuclear_gas_api.get_all_company_nuclear_and_gas_data,
+}
 
-def get_eu_taxonomy_data(company_name: str, reporting_period: str) -> List[BaseModel]:
-    """Retrieve all Taxonomy data for a given company name and fiscal year from Dataland."""
-    company = client.company_api.get_companies(search_string=company_name, data_types=[DataTypeEnum.SFDR])[0]
-    company_id = company.company_id
-    eu_taxonomy_data = []
-    if eu_taxonomy_nf_data := client.eu_taxonomy_nf_api.get_all_company_eutaxonomy_non_financials_data(company_id=company_id, reporting_period=reporting_period):
-        eu_taxonomy_data.append(eu_taxonomy_nf_data[0].data)
-    elif eu_taxonomy_fin_data := client.eu_taxonomy_fin_api.get_all_company_eutaxonomy_financials_data(company_id=company_id, reporting_period=reporting_period):
-        eu_taxonomy_data.append(eu_taxonomy_fin_data[0].data)
-    if eu_taxonomy_nuclear_and_gas_data := client.eu_taxonomy_nuclear_gas_api.get_all_company_nuclear_and_gas_data(company_id=company_id, reporting_period=reporting_period):
-        eu_taxonomy_data.append(eu_taxonomy_nuclear_and_gas_data[0].data)
-    return eu_taxonomy_data
+def get_company_id(company_name: str) -> str:
+    """
+    Fetches the Dataland internal company identifier for a given company name.
 
-def fetch_sfdr_report(company_name: str, reporting_period: str) -> SfdrData:
-    """Retrieve the SFDR emissions data for a given company name and fiscal year from Dataland."""
+    :param company_name: The name of the company as a string, e.g. "BASF SE"
+
+    :return: The unique company identifier used in Dataland.
+    :raises Exception: If no company was found or an unexpected error ocurred.
+    """
     try:
-        company_data = client.company_api.get_companies(search_string=company_name, data_types=[DataTypeEnum.SFDR])
+        company_data = client.company_api.get_companies(search_string=company_name)
     except Exception as exc:
         raise Exception(f'Error retrieving company data for {company_name}: {str(exc)}!')
     if not company_data:
         raise Exception(f'No company was found under the name {company_name} in Dataland!')
     else:
-        company_id = company_data[0].company_id
-    try:
-        sfdr_data = client.sfdr_api.get_all_company_sfdr_data(company_id=company_id, reporting_period=reporting_period)
-    except Exception as exc:
-        raise Exception(f'Error retrieving SFDR data for {company_name} and reporting period {reporting_period}: {str(exc)}!')
-    if not sfdr_data:
-        raise Exception(f'No SFDR data was found for reporting period {reporting_period} for company {company_name} in Dataland!')
-    else:
-        return sfdr_data[0].data
+        return company_data[0].company_id
 
-# Currently not used
-def fetch_sfdr_reports(company_names: List[str], reporting_periods: List[str]) -> List[Union[SfdrData, str]]:
-    """Fetch SFDR reports for given list of company names and reporting periods."""
-    sfdr_reports: list = []
-    for company_name in company_names:
-        for reporting_period in reporting_periods:
-            try:
-                sfdr_data = fetch_sfdr_report(company_name, reporting_period)
-            except Exception as exc:
-                sfdr_data = str(exc)
-            sfdr_reports.append(sfdr_data)
-    return sfdr_reports
+def construct_data_url(company_id: str, reporting_period: str, data_type: DataTypeEnum):
+    """
+    Construct a link to the Dataland website which should be provided as a source of the retrieved reports.
+
+    :param company_id: The unique identifier of a company used in Dataland.
+    :param reporting_period: The fiscal year of the published report as a string, e.g. "2024".
+    :param data_type: The type of reporting framework, e.g. DataTypeEnum.SFDR.
+
+    :return: Constructed Dataland URL of the given company, data framework and reporting period.
+    """
+    return f'https://dataland.com/companies/{company_id}/frameworks/{data_type.value}/reportingPeriods/{reporting_period}'
+
+def get_report_data(
+        company_name: str,
+        reporting_period: str,
+        data_type: DataTypeEnum) -> Dict[str, Union[SfdrData, EutaxonomyFinancialsData, EutaxonomyNonFinancialsData, NuclearAndGasData]]:
+    """
+    Fetches the Dataland reports data for a given company name, reporting period and data framework (SFDR, EU Taxonomy,...).
+    Calls the respective GET-Endpoint of Dataland API via the REPORT_DISPATCH.
+
+    :param company_name: Name of the company for which the SFDR report is retrieved, e.g. "BASF SE".
+    :param reporting_period: The fiscal year of the published report as a string, e.g. "2024".
+    :param data_type: The type of reporting framework, e.g. DataTypeEnum.SFDR.
+
+    :return: The report data and source URL for the given company name, reporting period and data framework.
+    :raises Exception: If no company or report was found or an unexpected error ocurred.
+    """
+    try:
+        company_id = get_company_id(company_name=company_name)
+    except Exception as exc:
+        raise Exception(exc)
+
+    try:
+        report_data = REPORT_DISPATCH[data_type](company_id=company_id, reporting_period=reporting_period)
+    except Exception as exc:
+        raise Exception(exc)
+
+    if not report_data:
+        raise Exception(
+            f'No {data_type.value} data was found for reporting period '
+            f'{reporting_period} for company {company_name} in Dataland!'
+        )
+    else:
+        data_url = construct_data_url(
+            company_id=company_id,
+            reporting_period=reporting_period,
+            data_type=data_type
+        )
+        return {"data_url": data_url, "report_data": report_data}
 
 
 ## MCP TOOLS
 
-@mcp.tool(name="SFDR_Report")
-def get_sfdr_report(company_name: str, reporting_period: str):# -> List[SfdrData]:
+@dataland_mcp.tool(name="Company_Available_Reports")
+def get_company_available_reports(company_name: str):
     """
-    Retrieve the SFDR report for a given company and reporting period from Dataland.
-    These include Scope 1-3 Greenhouse gas emissions.
+    Retrieves a list of the available reports and its metadata for a given company.
+    It contains the active and accepted reports of all available frameworks and reporting periods.
+    This tool should only be called when checking which reports are available for a company.
+    For queries regarding reporting metrics call the corresponding report tools.
 
-    :param company_name: Name of the company for which the SFDR report is retrieved.
-    :param reporting_period: Reporting period of the SFDR report.
-    :return: Returns sfdr_data BaseModel object for the given company and reporting period.
-    """
-    return fetch_sfdr_report(company_name, reporting_period)
+    :param company_name: Name of the company for which the SFDR report is retrieved, e.g. "BASF SE".
 
-@mcp.tool(name="Scope1_GHG_Data")
-def get_scope1_ghg_emissions(company_name: str, fiscal_year: str):# -> Union[ExtendedDataPointBigDecimal, str]:
-    """
-    Retrieve the SFDR Scope 1 Greenhouse gas emissions data in tonnes CO2 for a given company name and fiscal year from Dataland.
-
-    :param company_name: Name of the company for which the SFDR report is retrieved.
-    :param fiscal_year: Reporting year of the SFDR report.
-    :return: Returns the scope1_ghg_emissions_in_tonnes object for the given company and fiscal year.
+    :return: Returns a list of data types and reporting periods of the available reports if the company is found,
+    otherwise an Exception string.
     """
     try:
-        sfdr_data = fetch_sfdr_report(company_name=company_name, reporting_period=fiscal_year)
+        company_id = get_company_id(company_name=company_name)
     except Exception as exc:
         return str(exc)
     else:
-        return sfdr_data.environmental.greenhouse_gas_emissions.scope1_ghg_emissions_in_tonnes
+        try:
+            meta_data = client.meta_api.get_list_of_data_meta_info(
+                company_id=company_id,
+                show_only_active=True,
+                qa_status=QaStatus.ACCEPTED)
+        except Exception as exc:
+            return str(exc)
+    if not meta_data:
+        return f'No meta information was found for the company {company_name} in Dataland!'
+    else:
+        available_reports = []
+        for report in meta_data:
+            available_reports.append({
+                    "dataType": report.data_type,
+                    "reportingPeriod": report.reporting_period,
+            })
+        return available_reports
 
-@mcp.tool(name="Scope2_GHG_Location_Data")
-def get_scope2_ghg_location_emissions(company_name: str, fiscal_year: str):# -> Union[ExtendedDataPointBigDecimal, str]:
+
+@dataland_mcp.tool(name="SFDR_Report")
+def get_sfdr_report(company_name: str, reporting_period: str):# -> Union[SfdrData, str]:
     """
-    Retrieve the SFDR location-based Scope 2 Greenhouse gas emissions data in tonnes CO2 for a given company name and fiscal year from Dataland.
-    If the user generically asks for Scope 2 emissions, the location-based and market-based data should be returned.
+    Retrieves the SFDR report for a given company name and reporting period from Dataland.
+    This data refers to the environmental, social, and governance (ESG) metrics and
+    disclosures required by EU regulations
 
-    :param company_name: Name of the company for which the SFDR report is retrieved.
-    :param fiscal_year: Reporting year of the SFDR report.
-    :return: Returns the scope2_ghg_emissions_location_based_in_tonnes object for the given company and fiscal year.
+    :param company_name: Name of the company for which the SFDR report is retrieved, e.g. "BASF SE".
+    :param reporting_period: The fiscal year of the SFDR report as a string, e.g. "2024".
+
+    :return: The SFDR data for the given company name and reporting period if found, otherwise an Exception string.
     """
     try:
-        sfdr_data = fetch_sfdr_report(company_name=company_name, reporting_period=fiscal_year)
+        sfdr_data = get_report_data(
+            company_name=company_name,
+            reporting_period=reporting_period,
+            data_type=DataTypeEnum.SFDR
+        )
     except Exception as exc:
         return str(exc)
     else:
-        return sfdr_data.environmental.greenhouse_gas_emissions.scope2_ghg_emissions_location_based_in_tonnes
+        return sfdr_data
 
-@mcp.tool(name="Scope2_GHG_Market_Data")
-def get_scope2_ghg_market_emissions(company_name: str, fiscal_year: str):# -> Union[ExtendedDataPointBigDecimal, str]:
+@dataland_mcp.tool(name="EU_Taxonomy_Financial_Report")
+def get_eu_fin_taxonomy_data(company_name: str, reporting_period: str):# -> List[BaseModel]:
     """
-    Retrieve the SFDR market-based Scope 2 Greenhouse gas emissions data in tonnes CO2 for a given company name and fiscal year from Dataland.
-    If the user generically asks for Scope 2 emissions, the location-based and market-based data should be returned.
+    Retrieves the EU Taxonomy data of financial companies for a given company name and
+    reporting period from Dataland. It encompasses disclosures on how financial products manage
+    environmental, social, and governance (ESG) risks and adverse sustainability impacts.
 
-    :param company_name: Name of the company for which the SFDR report is retrieved.
-    :param fiscal_year: Reporting year of the SFDR report.
-    :return: Returns the scope2_ghg_emissions_market_based_in_tonnes object for the given company and fiscal year.
+    :param company_name: Name of the financial company for which the Taxonomy report is retrieved, e.g. "Allianz SE".
+    :param reporting_period: The fiscal year of the Taxonomy report as a string, e.g. "2024".
+
+    :return: The financial Taxonomy data for the given company name and reporting period if found,
+    otherwise an Exception string.
     """
     try:
-        sfdr_data = fetch_sfdr_report(company_name=company_name, reporting_period=fiscal_year)
+        tax_fin_data = get_report_data(
+            company_name=company_name,
+            reporting_period=reporting_period,
+            data_type=DataTypeEnum.EUTAXONOMY_MINUS_FINANCIALS
+        )
     except Exception as exc:
         return str(exc)
     else:
-        return sfdr_data.environmental.greenhouse_gas_emissions.scope2_ghg_emissions_market_based_in_tonnes
+        return tax_fin_data
 
-@mcp.tool(name="Scope3_GHG_Data")
-def get_scope3_ghg_emissions(company_name: str, fiscal_year: str):# -> Union[ExtendedDataPointBigDecimal, str]:
+@dataland_mcp.tool(name="EU_Taxonomy_Non_Financial_Report")
+def get_eu_nf_taxonomy_data(company_name: str, reporting_period: str):# -> List[BaseModel]:
     """
-    Retrieve the SFDR Scope 3 Greenhouse gas emissions data in tonnes CO2 for a given company name and fiscal year from Dataland.
+    Retrieves the EU Taxonomy data of non-financial companies for a given company name and
+    reporting period from Dataland. It encompasses disclosures on how financial products manage
+    environmental, social, and governance (ESG) risks and adverse sustainability impacts.
 
-    :param company_name: Name of the company for which the SFDR report is retrieved.
-    :param fiscal_year: Reporting year of the SFDR report.
-    :return: Returns the scope3_ghg_emissions_in_tonnes object for the given company and fiscal year.
+
+    :param company_name: Name of the non-financial company for which the Taxonomy report is retrieved, e.g. "BASF SE".
+    :param reporting_period: The fiscal year of the Taxonomy report as a string, e.g. "2024".
+
+    :return: The non-financial Taxonomy data for the given company name and reporting period if found,
+    otherwise an Exception string.
     """
     try:
-        sfdr_data = fetch_sfdr_report(company_name=company_name, reporting_period=fiscal_year)
+        tax_nf_data = get_report_data(
+            company_name=company_name,
+            reporting_period=reporting_period,
+            data_type=DataTypeEnum.EUTAXONOMY_MINUS_NON_MINUS_FINANCIALS
+        )
     except Exception as exc:
         return str(exc)
     else:
-        return sfdr_data.environmental.greenhouse_gas_emissions.scope3_ghg_emissions_in_tonnes
+        return tax_nf_data
 
-@mcp.tool(name="Scope3_GHG_down_Data")
-def get_scope3_ghg_downstream_emissions(company_name: str, fiscal_year: str):# -> Union[ExtendedDataPointBigDecimal, str]:
+@dataland_mcp.tool(name="EU_Taxonomy_Nuclear_Gas_Report")
+def get_eu_nulear_gas_taxonomy_data(company_name: str, reporting_period: str):# -> List[BaseModel]:
     """
-    Retrieve the SFDR downstream Scope 3 Greenhouse gas emissions data in tonnes CO2 for a given company name and fiscal year from Dataland.
+    Retrieves the EU Nuclear and Gas Taxonomy data for a given company name and reporting period from Dataland.
+    It outlines the inclusion of nuclear energy and natural gas as transitional activities,
+    provided they meet strict criteria such as safety, emissions thresholds.
 
-    :param company_name: Name of the company for which the SFDR report is retrieved.
-    :param fiscal_year: Reporting year of the SFDR report.
-    :return: Returns the scope3_downstream_ghg_emissions_in_tonnes object for the given company and fiscal year.
+    :param company_name: Name of the company for which the nuclear and gas Taxonomy report is retrieved, e.g. "BASF SE".
+    :param reporting_period: The fiscal year of the Taxonomy report as a string, e.g. "2024".
+
+    :return: The nuclear and gas Taxonomy data for the given company name and reporting period if found,
+    otherwise an Exception string.
     """
     try:
-        sfdr_data = fetch_sfdr_report(company_name=company_name, reporting_period=fiscal_year)
+        tax_nuclear_gas_data = get_report_data(
+            company_name=company_name,
+            reporting_period=reporting_period,
+            data_type=DataTypeEnum.NUCLEAR_MINUS_AND_MINUS_GAS
+        )
     except Exception as exc:
         return str(exc)
     else:
-        return sfdr_data.environmental.greenhouse_gas_emissions.scope3_downstream_ghg_emissions_in_tonnes
+        return tax_nuclear_gas_data
 
-@mcp.tool(name="Scope3_GHG_up_Data")
-def get_scope3_ghg_upstream_emissions(company_name: str, fiscal_year: str):# -> Union[ExtendedDataPointBigDecimal, str]:
-    """
-    Retrieve the SFDR upstream Scope 3 Greenhouse gas emissions data in tonnes CO2 for a given company name and fiscal year from Dataland.
-
-    :param company_name: Name of the company for which the SFDR report is retrieved.
-    :param fiscal_year: Reporting year of the SFDR report.
-    :return: Returns the scope3_upstream_ghg_emissions_in_tonnes object for the given company and fiscal year.
-    """
-    try:
-        sfdr_data = fetch_sfdr_report(company_name=company_name, reporting_period=fiscal_year)
-    except Exception as exc:
-        return str(exc)
-    else:
-        return sfdr_data.environmental.greenhouse_gas_emissions.scope3_upstream_ghg_emissions_in_tonnes
-
-@mcp.tool(name="Taxonomy_Report")
-def get_taxonomy_data(company_name: str, fiscal_year: str):# -> List[BaseModel]:
-    """
-    Retrieve the EU Taxonomy data for a given company name and fiscal year from Dataland.
-
-    :param company_name: Name of the company for which the Taxonomy reports are retrieved.
-    :param fiscal_year: Reporting year of the Taxonomy reports.
-    :return: Returns a list of taxonomy reports for the given company and fiscal year.
-    """
-    return get_eu_taxonomy_data(company_name=company_name, reporting_period=fiscal_year)
-
-
-## Prompts and Resources - for now not used
-
-# @mcp.prompt(title="Data Format")
-# def data_request() -> list[base.Message]:
-#     """This prompt gives an additionally requests the LLM to present the data in table format."""
-#     return [base.UserMessage("Please present your findings in table format.")]
-#
-# # Add a dynamic greeting resource
-# @mcp.resource("greeting://{name}")
-# def get_greeting(name: str) -> str:
-#     """Get a personalized greeting"""
-#     return f"Hello, {name}!"
-#
-# # Add a resource
-# @mcp.resource("data://sfdr/adidas")
-# def get_adidas_sfdr_data() -> SfdrData:
-#     """Get the SFDR data for adidas containing all emissions data for 2024."""
-#     return retrieve_sfdr_data("Adidas", "2024")
-#
-# @mcp.resource("data://sfdr/basf")
-# def get_basf_sfdr_data() -> SfdrData:
-#     """Get the SFDR data for BASF containing all emissions data for 2023."""
-#     return retrieve_sfdr_data("BASF", "2023")
 
 if __name__ == "__main__":
-    mcp.run(transport="stdio")
+    dataland_mcp.run(transport="stdio")
