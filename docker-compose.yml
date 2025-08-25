@@ -8,3 +8,29 @@ services:
     env_file:
       - .env
     container_name: dataland-mcp-server
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      - "3000:8080"
+    env_file:
+      - .env
+    volumes:
+      - open-webui:/app/backend/data
+    container_name: open-webui
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
+
+volumes:
+  open-webui:
