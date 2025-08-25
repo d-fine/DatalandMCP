@@ -12,7 +12,8 @@ RUN apk add --no-cache \
     sed \
     python3 \
     py3-pip \
-    bash
+    bash \
+    dos2unix
 
 # Install PDM
 RUN python3 -m pip install --break-system-packages pdm
@@ -25,8 +26,9 @@ COPY bin/ /app/bin/
 COPY src/ /app/src/
 COPY entrypoint.sh /app/entrypoint.sh
 
-# Make scripts executable
-RUN chmod +x /app/bin/*.sh && chmod +x /app/entrypoint.sh
+# Fix line endings and make scripts executable
+RUN dos2unix /app/entrypoint.sh /app/bin/*.sh && \
+    chmod +x /app/bin/*.sh && chmod +x /app/entrypoint.sh
 
 # Set environment variables
 ENV PYTHONPATH=/app/src
