@@ -11,8 +11,9 @@ This repository contains an MCP Server which allows LLMs to access data from Dat
   - [Installation](#installation-1)
   - [Launch](#launch)
   - [Connect with Azure OpenAI](#connect-with-azure-openai)
-- [Run MCP Servers via mcpo](#run-mcp-servers-via-mcpo)
-  - [Installation and Launch](#installation-and-launch)
+- [Run MCP Server with Docker](#run-mcp-server-with-docker)
+  - [Prerequisites](#prerequisites-1)
+  - [Launch](#launch-1)
   - [Connect to Open WebUI](#connect-to-open-webui)
 
 ## Prerequisites
@@ -71,38 +72,42 @@ You should now be able to see the deployed model in the list of available models
 
 <img width="513" height="226" alt="Image" src="https://github.com/user-attachments/assets/7abca8c4-64df-41ee-bcba-eaae4c2d01da" />
 
-## Run MCP Servers via mcpo
+## Run MCP Server with Docker
 
-MCPO exposes any MCP Tool as an OpenAPI-compatible HTTP server. This is needed in our case. \
-(**Note:** Resources (Templates) and Prompts are yet not implemented in mcpo but there is are open Pull Requests regarding Resources: [MCPO - Pull Requests](https://github.com/open-webui/mcpo/pulls))
+The MCP server is containerized for easy deployment using Docker Compose.
 
-### Installation and Launch
+### Prerequisites
+- Docker and Docker Compose installed on your system
+- Create a `.env` file at the project root with your Dataland API key:
+  ```
+  DATALAND_API_KEY=your_api_key_here
+  ```
 
-MCPO requires Python3.8+ and can be installed via `pip install mcpo`\
-After successful installation you can set up a config file in the same format as for Claude Desktop or Cursor.
+### Launch
 
-**Config Template:**
-```
-{
-    "mcpServers": {
-        "DatalandMCP": {
-            "type": "stdio",
-            "command": "path_to_dataland_venv\\Scripts\\python.exe",
-            "args": ["path_to_server\\mcp_server.py", "stdio"],
-            "env": {
-              "DATALAND_MCP_ROOT_DIR": "",
-              "DATALAND_QARG_ROOT_DIR": "",
-              "DATALAND_API_KEY": ""
-          }
-        }
-    },
-    "port": 8000
-}
+From the repository root directory, start the MCP server:
+
+```bash
+docker-compose up
 ```
 
-Within Powershell, launch the server via `mcpo --config mcp.json --port 8000 --host localhost`.
+To run in the background:
+```bash
+docker-compose up -d
+```
 
-Now the server should be running. Its documentation (Swagger UI) should now be accessible via http://localhost:8000/DatalandMCP/docs.
+To rebuild and start:
+```bash
+docker-compose up --build
+```
+
+Now the server should be running. Its documentation (Swagger UI) should be accessible via http://localhost:8000/DatalandMCP/docs.
+
+### Stopping the Server
+
+```bash
+docker-compose down
+```
 
 ### Connect to Open WebUI
 
