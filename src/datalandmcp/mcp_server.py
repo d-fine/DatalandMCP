@@ -108,11 +108,13 @@ def get_company_available_reports(company_name: str):
     """
     Retrieves a list of the available reports and its metadata for a given company.
     It contains the active and accepted reports of all available frameworks and reporting periods.
+    This tool should only be called when checking which reports are available for a company.
+    For queries regarding reporting metrics call the corresponding report tools.
 
     :param company_name: Name of the company for which the SFDR report is retrieved, e.g. "BASF SE".
 
-    :return: Returns a list of data types and reporting periods of the available reports.
-    :raises Exception: If no company or report was found or an unexpected error ocurred.
+    :return: Returns a list of data types and reporting periods of the available reports if the company is found,
+    otherwise an Exception string.
     """
     try:
         company_id = get_company_id(company_name=company_name)
@@ -125,10 +127,9 @@ def get_company_available_reports(company_name: str):
                 show_only_active=True,
                 qa_status=QaStatus.ACCEPTED)
         except Exception as exc:
-            raise Exception(exc)
+            return str(exc)
     if not meta_data:
-        raise Exception(
-            f'No meta information was found for the company {company_name} in Dataland!')
+        return f'No meta information was found for the company {company_name} in Dataland!'
     else:
         available_reports = []
         for report in meta_data:
@@ -150,7 +151,6 @@ def get_sfdr_report(company_name: str, reporting_period: str):# -> Union[SfdrDat
     :param reporting_period: The fiscal year of the SFDR report as a string, e.g. "2024".
 
     :return: The SFDR data for the given company name and reporting period if found, otherwise an Exception string.
-    :raises Exception: If no company or report was found or an unexpected error ocurred.
     """
     try:
         sfdr_data = get_report_data(
@@ -175,7 +175,6 @@ def get_eu_fin_taxonomy_data(company_name: str, reporting_period: str):# -> List
 
     :return: The financial Taxonomy data for the given company name and reporting period if found,
     otherwise an Exception string.
-    :raises Exception: If no company or report was found or an unexpected error ocurred.
     """
     try:
         tax_fin_data = get_report_data(
@@ -201,7 +200,6 @@ def get_eu_nf_taxonomy_data(company_name: str, reporting_period: str):# -> List[
 
     :return: The non-financial Taxonomy data for the given company name and reporting period if found,
     otherwise an Exception string.
-    :raises Exception: If no company or report was found or an unexpected error ocurred.
     """
     try:
         tax_nf_data = get_report_data(
@@ -226,7 +224,6 @@ def get_eu_nulear_gas_taxonomy_data(company_name: str, reporting_period: str):# 
 
     :return: The nuclear and gas Taxonomy data for the given company name and reporting period if found,
     otherwise an Exception string.
-    :raises Exception: If no company or report was found or an unexpected error ocurred.
     """
     try:
         tax_nuclear_gas_data = get_report_data(
