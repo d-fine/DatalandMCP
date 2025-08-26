@@ -1,0 +1,95 @@
+name: Deploy to AWS
+
+on:
+  workflow_dispatch:
+    inputs:
+      purge_volume:
+        description: 'Purge Open Web UI volume (removes all user data)'
+        required: false
+        default: false
+        type: boolean
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - production
+        - staging
+
+env:
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
+jobs:
+  deploy:
+    name: Deploy to AWS EC2
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'production' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+
+    - name: Add EC2 to known hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Install Docker and Docker Compose (if needed)
+      run: |
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'bash -s' < deployment/install-docker.sh
+
+    - name: Purge Open Web UI Volume (if requested)
+      if: ${{ inputs.purge_volume == true }}
+      run: |
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'bash -s' < deployment/purge-volume.sh
+
+    - name: Deploy application
+      run: |
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'bash -s' < deployment/deploy-app.sh "${{ github.repository }}" "${{ secrets.DATALAND_API_KEY }}"
+
+    - name: Health check
+      run: |
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'bash -s' < deployment/health-check.sh
+
+    - name: Display deployment info
+      run: |
+        echo "🎉 Deployment Summary:"
+        echo "Environment: ${{ inputs.environment || 'production' }}"
+        echo "Host: ${{ secrets.EC2_HOST }}"
+        echo "MCP Server: http://${{ secrets.EC2_HOST }}:8000/DatalandMCP/docs"
+        echo "Open Web UI: http://${{ secrets.EC2_HOST }}:8080"
+        echo "Volume Purged: ${{ inputs.purge_volume || 'false' }}"
+
+  notify:
+    name: Notify deployment status
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: always()
+    steps:
+    - name: Notify success
+      if: needs.deploy.result == 'success'
+      run: |
+        echo "✅ Deployment successful!"
+        echo "MCP Server: http://${{ secrets.EC2_HOST }}:8000/DatalandMCP/docs"
+        echo "Open Web UI: http://${{ secrets.EC2_HOST }}:8080"
+
+    - name: Notify failure
+      if: needs.deploy.result == 'failure'
+      run: |
+        echo "❌ Deployment failed!"
+        echo "Check the logs for more details."
+        exit 1
