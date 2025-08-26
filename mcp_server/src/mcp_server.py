@@ -39,7 +39,7 @@ def get_company_id(company_name: str) -> str:
     :param company_name: The name of the company as a string, e.g. "BASF SE"
 
     :return: The unique company identifier used in Dataland.
-    :raises Exception: If no company was found or an unexpected error ocurred.
+    :raises Exception: If no company was found or an unexpected error occurred.
     """
     try:
         company_data = client.company_api.get_companies(search_string=company_name)
@@ -75,17 +75,17 @@ def get_report_data(
     :param data_type: The type of reporting framework, e.g. DataTypeEnum.SFDR.
 
     :return: The report data and source URL for the given company name, reporting period and data framework.
-    :raises Exception: If no company or report was found or an unexpected error ocurred.
+    :raises Exception: If no company or report was found or an unexpected error occurred.
     """
     try:
         company_id = get_company_id(company_name=company_name)
     except Exception as exc:
-        raise Exception(exc)
+        raise Exception(f"Failed to get company ID for company '{company_name}'") from exc
 
     try:
         report_data = REPORT_DISPATCH[data_type](company_id=company_id, reporting_period=reporting_period)
     except Exception as exc:
-        raise Exception(exc)
+        raise Exception(f"Failed to fetch report data for company_id '{company_id}', reporting_period '{reporting_period}', data_type '{data_type}'") from exc
 
     if not report_data:
         raise Exception(
@@ -213,7 +213,7 @@ def get_eu_nf_taxonomy_data(company_name: str, reporting_period: str):# -> List[
         return tax_nf_data
 
 @dataland_mcp.tool(name="EU_Taxonomy_Nuclear_Gas_Report")
-def get_eu_nulear_gas_taxonomy_data(company_name: str, reporting_period: str):# -> List[BaseModel]:
+def get_eu_nuclear_gas_taxonomy_data(company_name: str, reporting_period: str):# -> List[BaseModel]:
     """
     Retrieves the EU Nuclear and Gas Taxonomy data for a given company name and reporting period from Dataland.
     It outlines the inclusion of nuclear energy and natural gas as transitional activities,

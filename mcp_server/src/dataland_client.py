@@ -86,9 +86,8 @@ class DatalandClient:  # noqa: PLR0904
 
     @property
     def datapoint_api(self) -> dataland_backend.DataPointControllerApi:
-        """Funtion to run the data-point-controller API."""
+        """Function to run the data-point-controller API."""
         return dataland_backend.DataPointControllerApi(self.backend_client)
-
     @property
     def sfdr_api(self) -> dataland_backend.SfdrDataControllerApi:
         """Function to run the sfdr-data-controller API."""
@@ -101,7 +100,7 @@ class DatalandClient:  # noqa: PLR0904
 
     @property
     def eu_taxonomy_fin_api(self) -> dataland_backend.EutaxonomyFinancialsDataControllerApi:
-        """Function to run the eu-taxonomy-non-financials-data-controller API."""
+        """Function to run the eu-taxonomy-financials-data-controller API."""
         return dataland_backend.EutaxonomyFinancialsDataControllerApi(self.backend_client)
 
     @property
@@ -185,7 +184,10 @@ class DatalandInstance:
     @property
     def client(self) -> DatalandClient:
         """Creates a DatalandClient for the Dataland environment."""
-        return DatalandClient(dataland_url=self.base_url, api_key=os.getenv(self.api_key_env, None))
+        api_key = os.getenv(self.api_key_env)
+        if not api_key:
+            raise ValueError(f"API key not found in environment variable: {self.api_key_env}")
+        return DatalandClient(dataland_url=self.base_url, api_key=api_key)
 
 
 PRODUCTION_INSTANCE = DatalandInstance("https://dataland.com", "DATALAND_API_KEY")

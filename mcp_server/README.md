@@ -15,19 +15,14 @@ From the repository root directory:
    docker-compose up
    ```
 
-2. **Build and start:**
+2. **Enforce a re-build of the containers and start:**
    ```bash
    docker-compose up --build
    ```
 
-3. **Run in background:**
-   ```bash
-   docker-compose up -d
-   ```
-
 ### Accessing the Service
 
-- **Swagger UI**: Available at `http://localhost:8000`
+- **Swagger UI** interactive documentation of the MCP Server: `http://localhost:8000/DatalandMCP/docs`
 
 ### Container Behavior
 

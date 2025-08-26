@@ -87,7 +87,9 @@ You should now be able to see the deployed model in the list of available models
 
 <img width="513" height="226" alt="Image" src="https://github.com/user-attachments/assets/7abca8c4-64df-41ee-bcba-eaae4c2d01da" />
 
-3. **Connect the MCP Server**: Within Open Web UI, add the running MCP server via `Profile -> Settings -> Tools -> +`:
+3. **Test the model connection**: **Important**: Before you can add MCP tools, you must first test your model connection by sending at least one chat message to verify the model is working properly.
+
+4. **Connect the MCP Server**: After confirming your model works, add the running MCP server via `Profile -> Settings -> Tools -> +`:
 
 <img width="453" height="240" alt="Image" src="https://github.com/user-attachments/assets/e09cbbd7-a3e6-4680-b89a-f93dad9d2bc8" />
 
