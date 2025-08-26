@@ -54,6 +54,19 @@ To stop the services:
 docker-compose down
 ```
 
+**Note**: Open Web UI data (including user accounts, settings, and configurations) is persisted in a Docker volume named `datalandmcp_open-webui`. This means your Open Web UI setup will be preserved between container restarts. If you need to reset Open Web UI to a fresh state, you must explicitly delete this volume:
+
+```bash
+# Stop the services first
+docker-compose down
+
+# Remove the Open Web UI volume to start fresh
+docker volume rm datalandmcp_open-webui
+
+# Start services again
+docker-compose up
+```
+
 ### Configure Open Web UI
 
 After the containers are running, you'll need to configure Open Web UI:
