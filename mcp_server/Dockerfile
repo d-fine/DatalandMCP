@@ -3,7 +3,7 @@ FROM eclipse-temurin:21.0.7_6-jre-alpine as base
 # Set working directory
 WORKDIR /app
 
-# Install Python 3.13 and other dependencies (Java already included in base image)
+# Install Python 3 and other dependencies (Java already included in base image)
 RUN apk add --no-cache \
     git \
     build-base \
@@ -37,4 +37,3 @@ EXPOSE 8000
 
 # Default command runs Swagger UI
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["swagger"]

@@ -9,7 +9,7 @@ echo "🚀 Starting application deployment..."
 
 # Create deployment directory
 sudo mkdir -p "$DEPLOY_DIR"
-sudo chown $USER:$USER "$DEPLOY_DIR"
+sudo chown "$(whoami)":"$(whoami)" "$DEPLOY_DIR"
 cd "$DEPLOY_DIR"
 
 # Clone or pull latest code from GitHub
@@ -21,8 +21,9 @@ else
     git clone "https://github.com/$GITHUB_REPO.git" .
 fi
 
-# Create .env file with secrets
-echo "DATALAND_API_KEY=$DATALAND_API_KEY" > .env
+# Create .env file with secrets (restrict permissions)
+umask 077
+printf "DATALAND_API_KEY=%s\n" "$DATALAND_API_KEY" > .env
 
 # Stop existing containers
 echo "⏹️  Stopping existing containers..."

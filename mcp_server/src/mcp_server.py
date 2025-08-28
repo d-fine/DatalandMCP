@@ -111,7 +111,7 @@ def get_company_available_reports(company_name: str):
     This tool should only be called when checking which reports are available for a company.
     For queries regarding reporting metrics call the corresponding report tools.
 
-    :param company_name: Name of the company for which the SFDR report is retrieved, e.g. "BASF SE".
+    :param company_name: Name of the company for which available reports are retrieved, e.g. "BASF SE".
 
     :return: Returns a list of data types and reporting periods of the available reports if the company is found,
     otherwise an Exception string.

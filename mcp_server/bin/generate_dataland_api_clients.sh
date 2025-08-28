@@ -18,7 +18,7 @@ function openapi_generator() {
 # Dataland Backend
 rm -rf ./clients/backend
 openapi_generator generate \
-    -i https://dataland.com/api/v3/api-docs/public \
+    -i "https://dataland.com/api/v3/api-docs/public" \
     -g python \
     --additional-properties=packageName=dataland_backend \
     --type-mappings=date=str \

@@ -21,6 +21,7 @@ for i in {1..20}; do
     elif [[ "$MCP_STATUS" == "unhealthy" || "$WEBUI_STATUS" == "unhealthy" ]]; then
         echo "❌ Container health check failed!"
         docker compose ps
+        docker compose logs --no-color --tail=200
         exit 1
     fi
     

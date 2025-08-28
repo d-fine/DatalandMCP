@@ -41,7 +41,7 @@ class DatalandClient:  # noqa: PLR0904
     def get_global_client() -> DatalandClient:
         """Obtain the global dataland client.
 
-        Defaults to the clone instance.
+        Defaults to the production instance.
         """
         global _global_client  # noqa: PLW0603
         if _global_client is None:

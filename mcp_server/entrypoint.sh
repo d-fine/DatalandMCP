@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Substitute environment variable into mcp.json
 echo "Substituting DATALAND_API_KEY into mcp.json..."
@@ -17,7 +17,5 @@ echo "Generating Dataland API clients..."
 echo "Installing dependencies..."
 pdm install --prod
 
-
 echo "Starting up MCPO..."
-source .venv/bin/activate
-exec mcpo --config mcp.json --port 8000 --host 0.0.0.0
+exec pdm run mcpo --config mcp.json --port 8000 --host 0.0.0.0
