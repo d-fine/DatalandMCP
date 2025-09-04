@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.prompts import base
 
-from datalandmcp.dataland_client import PRODUCTION_INSTANCE, DatalandClient
+from dataland_client import PRODUCTION_INSTANCE, DatalandClient
 from dataland_backend.models.sfdr_data import SfdrData
 from dataland_backend.models.eutaxonomy_financials_data import EutaxonomyFinancialsData
 from dataland_backend.models.eutaxonomy_non_financials_data import EutaxonomyNonFinancialsData

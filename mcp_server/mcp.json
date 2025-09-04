@@ -1,0 +1,14 @@
+{
+    "mcpServers": {
+        "DatalandMCP": {
+            "type": "stdio",
+            "command": "python",
+            "args": ["src/mcp_server.py", "stdio"],
+            "env": {
+              "DATALAND_MCP_ROOT_DIR": ".",
+              "DATALAND_API_KEY": "PLACEHOLDER_DATALAND_API_KEY"
+          }
+        }
+    },
+    "port": 8000
+}

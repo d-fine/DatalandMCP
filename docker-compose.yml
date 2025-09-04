@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  dataland-mcp-server:
+    build: ./mcp_server
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    container_name: dataland-mcp-server
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/DatalandMCP/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - open-webui:/app/backend/data
+    container_name: open-webui
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
+
+volumes:
+  open-webui:
