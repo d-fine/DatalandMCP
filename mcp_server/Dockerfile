@@ -25,17 +25,18 @@ COPY mcp.json /app/
 COPY bin/ /app/bin/
 COPY src/ /app/src/
 COPY entrypoint.sh /app/entrypoint.sh
+COPY healthcheck.sh /app/healthcheck.sh
 
 # Fix line endings and make scripts executable
-RUN dos2unix /app/entrypoint.sh /app/bin/*.sh && \
-    chmod +x /app/bin/*.sh && chmod +x /app/entrypoint.sh
+RUN dos2unix /app/entrypoint.sh /app/healthcheck.sh /app/bin/*.sh && \
+    chmod +x /app/bin/*.sh && chmod +x /app/healthcheck.sh && chmod +x /app/entrypoint.sh
 
 # Set environment variables
 ENV PYTHONPATH=/app/src
 
-# Expose port for Swagger UI
+# Expose ports for the servers
 EXPOSE 8000
+EXPOSE 8001
 
-# Default command runs Swagger UI
+# Install dependencies and run mcp server
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["swagger"]

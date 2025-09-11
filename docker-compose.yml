@@ -1,15 +1,16 @@
 version: '3.8'
 
 services:
-  dataland-mcp-server:
+  dataland-mcp:
     build: ./mcp_server
     ports:
       - "8000:8000"
+      - "8001:8001"
     env_file:
       - .env
-    container_name: dataland-mcp-server
+    container_name: dataland-mcp
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/DatalandMCP/docs"]
+      test: ["CMD", "/app/healthcheck.sh"]
       interval: 30s
       timeout: 10s
       retries: 3

@@ -5,11 +5,11 @@ It has to be run by the MCP Client.
 
 __version__ = '0.0.1'
 
-from typing import List, Union, Dict
-from pydantic import BaseModel
+import argparse
+from typing import Union, Dict
 
-from mcp.server.fastmcp import FastMCP
-from mcp.server.fastmcp.prompts import base
+from fastmcp import FastMCP
+from starlette.responses import JSONResponse
 
 from dataland_client import PRODUCTION_INSTANCE, DatalandClient
 from dataland_backend.models.sfdr_data import SfdrData
@@ -18,6 +18,15 @@ from dataland_backend.models.eutaxonomy_non_financials_data import EutaxonomyNon
 from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
 from dataland_backend.models.data_type_enum import DataTypeEnum
 from dataland_backend.models.qa_status import QaStatus
+
+# Pass argument to define transport type (e.g. stdio, streamable-http)
+parser = argparse.ArgumentParser(description="Run Dataland MCP server")
+parser.add_argument(
+    "--transport",
+    dest="transport",
+    choices=["stdio", "streamable-http", "http"],
+    help="Transport type to use",
+)
 
 DatalandClient.set_global_client(PRODUCTION_INSTANCE.client)
 client=DatalandClient.get_global_client()
@@ -236,6 +245,18 @@ def get_eu_nulear_gas_taxonomy_data(company_name: str, reporting_period: str):# 
     else:
         return tax_nuclear_gas_data
 
+@dataland_mcp.custom_route("/health", methods=["GET"])
+def health_check(request):
+    """This custom route is used to perform health checks on the server."""
+    return JSONResponse({"status": "healthy", "service": "DatalandMCP"})
+
 
 if __name__ == "__main__":
-    dataland_mcp.run(transport="stdio")
+    args = parser.parse_args()
+    transport_normalized = args.transport.strip().lower() if isinstance(args.transport, str) else None
+
+    # Default HTTP port kept at 8001 to avoid conflict with mcpo port 8000
+    if transport_normalized in {"http", "streamable-http"}:
+        dataland_mcp.run(transport="streamable-http", host="0.0.0.0", port=8001)
+    else:
+        dataland_mcp.run(transport="stdio")
