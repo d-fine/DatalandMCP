@@ -68,7 +68,7 @@ class DatalandMCPServer:
         else:
             return available_reports
 
-    def _get_sfdr_data(self, company_name: str, reporting_period: str) -> Union[str, Dict[str, SfdrData]]:
+    def _get_sfdr_data(self, company_name: str, reporting_period: str):# -> Union[str, Dict[str, SfdrData]]:
         """
         Retrieves the SFDR data for a given company name and reporting period from Dataland.
         This data refers to the environmental, social, and governance (ESG) metrics and
@@ -90,7 +90,7 @@ class DatalandMCPServer:
         else:
             return sfdr_data
 
-    def _get_eu_fin_taxonomy_data(self, company_name: str, reporting_period: str) -> Union[str, Dict[str, EutaxonomyFinancialsData]]:
+    def _get_eu_fin_taxonomy_data(self, company_name: str, reporting_period: str):# -> Union[str, Dict[str, EutaxonomyFinancialsData]]:
         """
         Retrieves the EU Taxonomy data of financial companies for a given company name and
         reporting period from Dataland. It encompasses disclosures on how financial products manage
@@ -113,7 +113,7 @@ class DatalandMCPServer:
         else:
             return tax_fin_data
 
-    def _get_eu_nf_taxonomy_data(self, company_name: str, reporting_period: str) -> Union[str, Dict[str, EutaxonomyNonFinancialsData]]:
+    def _get_eu_nf_taxonomy_data(self, company_name: str, reporting_period: str):# -> Union[str, Dict[str, EutaxonomyNonFinancialsData]]:
         """
         Retrieves the EU Taxonomy data of non-financial companies for a given company name and
         reporting period from Dataland. It encompasses disclosures on how financial products manage
@@ -136,7 +136,7 @@ class DatalandMCPServer:
         else:
             return tax_nf_data
 
-    def _get_eu_nuclear_gas_taxonomy_data(self, company_name: str, reporting_period: str) -> Union[str, Dict[str, NuclearAndGasData]]:
+    def _get_eu_nuclear_gas_taxonomy_data(self, company_name: str, reporting_period: str):# -> Union[str, Dict[str, NuclearAndGasData]]:
         """
         Retrieves the EU Nuclear and Gas Taxonomy data for a given company name and reporting period from Dataland.
         It outlines the inclusion of nuclear energy and natural gas as transitional activities,
