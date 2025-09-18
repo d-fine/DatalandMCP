@@ -92,7 +92,6 @@ services:
     environment:
       - MEILI_HOST=http://meilisearch:7700
       - MEILI_NO_ANALYTICS=true
-      - MEILI_MASTER_KEY=DrhYf7zENyR6AlUCKmnz0eYASOQdl6zxH7s7MKFSfFCt
     env_file:
       - .env.librechat
     volumes:
@@ -101,9 +100,9 @@ services:
     container_name: vectordb
     image: pgvector/pgvector:0.8.0-pg15-trixie
     environment:
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
     env_file:
       - .env.librechat
     restart: always
