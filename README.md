@@ -110,12 +110,50 @@ The deployment name is the given name of the deployed model within the resource 
 
 ### Configure LibreChat
 
-After the containers are running, you'll need to configure LibreChat:
+LibreChat can be configured via a `librechat.yaml` file in the project root. The DatalandMCP Server is already connected. 
+The following steps illustrate how to connect a deployed Azure OpenAI model to LibreChat.
 
-1. **Create an LibreChat account**: Navigate to http://localhost:3080 and create an account.
+1. **Stop running containers**:
+   ```bash
+   docker compose down
+   ```
 
-2. **Further Cofiguration**: Currently, LibreChat runs without any modified configurations, i.e. no models or MCP servers are connected. 
-The configuration files as well as documentation will be added soon.
+2. **Add API Key**: Add the `API_KEY` of the deployed model to the `.env` file:
+   ```bash
+   AZURE_OPENAI_API_KEY=your_api_key_here
+   ```
+
+3. **Add model to config file**: Open the `librechat.yaml` file which is located in the project root. 
+   Go to the `endpoints` section and uncomment the `azureOpenAI` configuration:
+   ```bash
+   endpoints:
+     # Azure OpenAI configuration
+     azureOpenAI:
+       titleModel: "" # Model name, e.g. "gpt-5"
+       plugins: True # Enables plugins
+       groups:
+         - group: "" # Arbitrary name, e.g. "dataland-group"
+           apiKey: "${AZURE_OPENAI_API_KEY}" # Azure OpenAI API KEY from .env
+           instanceName: "" # Azure resource name, e.g. "dataland-mcp-resource"
+           version: "" # API version, e.g. "2024-12-01-preview"
+           models:
+             displayed-model-name: # Change to a model name that should be displayed in LibreChat, e.g. azure-gpt-5
+               deploymentName: "" # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5".
+               version: "" # API version same as above, e.g. "2024-12-01-preview"
+   ```
+
+   Fill out the configuration with the corresponding values of your deployed model. Note that the `displayed-model-name` key can be changed to any desired name.
+
+4. **Start the containers**:
+   ```bash
+   docker compose up -d
+   ```
+   **Note**: Initially LibreChat will tell you that the connection to the MCP server has failed. This is because the LibreChat container has a quicker startup than the DatalandMCP container; hence the MCP server is not yet running.
+   As soon as the server is running, LibreChat will be connected to it without restarting the container.
+   
+5. **Create a LibreChat account**: Navigate to http://localhost:3080 and create an account.
+
+6. **Navigation within LibreChat**: TBA
 
 **Note**: A separate file `.env.librechat` contains the environmental variables needed for LibreChat. They do not contain private secrets and do not have to be modified.
 

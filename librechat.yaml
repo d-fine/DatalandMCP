@@ -7,32 +7,6 @@ version: 1.2.1
 # Cache settings: Set to true to enable caching
 cache: true
 
-########################################################################################################################
-
-# Azure OpenAI configuration
-# endpoints:
-#   azureOpenAI:
-#     titleModel: "" # Model name, e.g. gpt-5
-#     plugins: True # Enables plugins
-#     groups:
-#       - group: "" # Arbitrary name
-#         apiKey: "${AZURE_OPENAI_API_KEY}" # Azure OpenAI API KEY from .env
-#         instanceName: "" # Azure resource name
-#         version: "" # API version, e.g. 2024-12-01-preview
-#         models:
-#           displayed_model_name: # Change to desired model name to be displayed in LibreChat, e.g. azure-gpt-5
-#             deploymentName: deployed_model_name # Change to deployed model name in Azure, e.g. d-fine-azure-gpt-5
-#             version: "" # API version, e.g. 2024-12-01-preview
-
-# MCP Server configuration for DatalandMCP
-mcpServers:
-  DatalandMCP:
-    type: http
-    url: http://host.docker.internal:8001/mcp
-    timeout: 60000
-
-########################################################################################################################
-
 # File storage configuration
 # Single strategy for all file types (legacy format, still supported)
 # fileStrategy: "s3"
@@ -190,7 +164,11 @@ actions:
     - 'google.com'
 
 # Example MCP Servers Object Structure
-# mcpServers:
+mcpServers:
+  Dataland:
+    type: http
+    url: http://host.docker.internal:8001/mcp
+    timeout: 60000
 #   everything:
 #     # type: sse # type can optionally be omitted
 #     url: http://localhost:3001/sse
@@ -218,6 +196,21 @@ actions:
 #       - /path/to/obsidian/vault
 
 # Definition of custom endpoints
+endpoints:
+  # Azure OpenAI configuration
+#   azureOpenAI:
+#     titleModel: "d-fine-azure-gpt-5" # Model name, e.g. "gpt-5"
+#     plugins: True # Enables plugins
+#     groups:
+#       - group: "dataland-group" # Arbitrary name, e.g. "dataland-group"
+#         apiKey: "${AZURE_OPENAI_API_KEY}" # Azure OpenAI API KEY from .env
+#         instanceName: "dataland-mcp-openai-eastus2" # Azure resource name, e.g. "dataland-mcp-resource"
+#         version: "2024-12-01-preview" # API version, e.g. "2024-12-01-preview"
+#         models:
+#           d-fine-azure-gpt-5: # Change to a model name that should be displayed in LibreChat, e.g. azure-gpt-5
+#             deploymentName: "d-fine-azure-gpt-5" # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5". NOT as a string.
+#             version: "2024-12-01-preview" # API version same as above, e.g. "2024-12-01-preview"
+
   # assistants:
   #   disableBuilder: false # Disable Assistants Builder Interface by setting to `true`
   #   pollIntervalMs: 3000  # Polling interval for checking assistant updates
