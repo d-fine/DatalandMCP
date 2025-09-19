@@ -72,7 +72,7 @@ class DatalandMCPUtils:
             self,
             company_name: str,
             reporting_period: str,
-            data_type: DataTypeEnum) -> Dict[str, Union[SfdrData, EutaxonomyFinancialsData, EutaxonomyNonFinancialsData, NuclearAndGasData]]:
+            data_type: DataTypeEnum) -> Dict[str, Union[str, SfdrData, EutaxonomyFinancialsData, EutaxonomyNonFinancialsData, NuclearAndGasData]]:
         """
         Fetches the Dataland reports data for a given company name, reporting period and data framework (SFDR, EU Taxonomy,...).
         Calls the respective GET-Endpoint of Dataland API via the REPORT_DISPATCH.

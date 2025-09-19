@@ -65,9 +65,9 @@ services:
       - type: bind
         source: ./.env.librechat
         target: /app/.env
-      - ./images:/app/client/public/images
-      - ./uploads:/app/uploads
-      - ./logs:/app/api/logs
+      - librechat_images:/app/client/public/images
+      - librechat_uploads:/app/uploads
+      - librechat_logs:/app/api/logs
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --spider --tries=1 http://host.docker.internal:3080/health || exit 1"]
       interval: 30s
@@ -82,7 +82,7 @@ services:
     env_file:
       - .env.librechat
     volumes:
-      - ./data-node:/data/db
+      - mongo_data:/data/db
     command: mongod --noauth
   meilisearch:
     container_name: chat-meilisearch
@@ -95,7 +95,7 @@ services:
     env_file:
       - .env.librechat
     volumes:
-      - ./meili_data_v1.12:/meili_data
+      - meili_data:/meili_data
   vectordb:
     container_name: vectordb
     image: pgvector/pgvector:0.8.0-pg15-trixie
@@ -123,3 +123,8 @@ services:
 volumes:
   open-webui:
   pgdata2:
+  mongo_data:
+  meili_data:
+  librechat_uploads:
+  librechat_logs:
+  librechat_images:
