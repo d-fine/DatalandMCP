@@ -18,6 +18,11 @@ echo "Installing dependencies..."
 pdm install --prod
 
 
-echo "Starting up MCPO..."
+echo "Starting up DatalandMCP..."
 source .venv/bin/activate
+
+echo "Launching MCP Server via streamable-http & MCPO..."
+exec python src/dataland_mcp.py --transport="streamable-http" --port 8001 --host 0.0.0.0 &
 exec mcpo --config mcp.json --port 8000 --host 0.0.0.0
+
+wait

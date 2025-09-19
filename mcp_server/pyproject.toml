@@ -6,6 +6,7 @@ authors = [
     {name = "Andreas Hoecherl", email = "andreas.hoecherl@d-fine.com"},
 ]
 dependencies = [
+    "fastmcp>=2.11.3",
     "mcp[cli]>=1.10.0",
     "dataland-backend @ file:///${PROJECT_ROOT}/clients/backend",
     "dataland-documents @ file:///${PROJECT_ROOT}/clients/documents",

@@ -1,12 +1,14 @@
 # DatalandMCP
 
 This repository contains an MCP Server which allows LLMs to access data from Dataland.
+Additionally, the open-source chat clients [Open WebUI](https://docs.openwebui.com/) & [LibreChat](https://www.librechat.ai/) can be launched within this repo which serve as MCP Hosts.
 
 ## Table of contents
 - [Prerequisites](#prerequisites)
 - [Quick Start with Docker Compose](#quick-start-with-docker-compose)
   - [Launch](#launch)
-  - [Configure Open Web UI](#configure-open-web-ui)
+  - [Configure Open WebUI](#configure-open-webui)
+  - [Configure LibreChat](#configure-librechat)
 - [Troubleshooting](#troubleshooting)
 - [Development Setup](#development-setup)
   - [Dataland Client](#dataland-client)
@@ -18,7 +20,7 @@ This repository contains an MCP Server which allows LLMs to access data from Dat
 
 ## Quick Start with Docker Compose
 
-The easiest way to get started is using Docker Compose, which starts both the MCP server and Open Web UI in one command.
+The easiest way to get started is using Docker Compose, which starts the MCP server and the MCP hosts (Open WebUI & LibreChat) in one command.
 
 Create a `.env` file at the project root with your Dataland API key:
 ```
@@ -29,7 +31,7 @@ You can create your API key as described [here](https://github.com/d-fine/Datala
 
 ### Launch
 
-From the repository root directory, start both the MCP server and Open Web UI:
+From the repository root directory, start both the MCP server and hosts:
 
 ```bash
 docker-compose up
@@ -46,7 +48,8 @@ docker-compose up --build
 ```
 
 After successful launch:
-- Open Web UI will be available at http://localhost:8080
+- Open WebUI will be available at http://localhost:8080
+- LibreChat will be available at http://localhost:3080
 - MCP server documentation (Swagger UI) will be accessible at http://localhost:8000/DatalandMCP/docs
 
 To stop the services:
@@ -54,46 +57,67 @@ To stop the services:
 docker-compose down
 ```
 
-**Note**: Open Web UI data (including user accounts, settings, and configurations) is persisted in a Docker volume named `datalandmcp_open-webui`. This means your Open Web UI setup will be preserved between container restarts. If you need to reset Open Web UI to a fresh state, you must explicitly delete this volume:
+**Note**: Open WebUI data (including user accounts, settings, and configurations) is persisted in a Docker volume named `datalandmcp_open-webui`. This means your Open WebUI setup will be preserved between container restarts. If you need to reset Open WebUI to a fresh state, you must explicitly delete this volume:
 
 ```bash
 # Stop the services first
 docker-compose down
 
-# Remove the Open Web UI volume to start fresh
+# Remove the Open WebUI volume to start fresh
 docker volume rm datalandmcp_open-webui
 
 # Start services again
 docker-compose up
 ```
 
-### Configure Open Web UI
+The same holds for LibreChat, which uses a volume named `pgdata2` which contains user accounts and settings. Unlike Open WebUI the base configurations of LibreChat (e.g. API connections) are set via a config file at project root.
 
-After the containers are running, you'll need to configure Open Web UI:
+### Configure Open WebUI
 
-1. **Create an Open Web UI account**: Navigate to http://localhost:8080 and create an account.
+After the containers are running, you'll need to configure Open WebUI:
 
-<img width="1904" height="907" alt="Image" src="https://github.com/user-attachments/assets/de16630b-c70f-45d4-87ea-d6f4bfd91f5e" />
+1. **Create an Open WebUI account**: Navigate to http://localhost:8080 and create an account.
 
-2. **Connect with Azure OpenAI**: Open Web UI supports Azure OpenAI to connect cloud-based LLMs.
+    <img width="1904" height="907" alt="Image" src="https://github.com/user-attachments/assets/de16630b-c70f-45d4-87ea-d6f4bfd91f5e" />
+
+2. **Connect with Azure OpenAI**: Open WebUI supports Azure OpenAI to connect cloud-based LLMs.
    Go to _Profile -> Admin Panel -> Settings -> Connections -> OpenAI API -> +_:
 
-<img width="462" height="418" alt="Image" src="https://github.com/user-attachments/assets/5e7e714e-6e7c-4e06-b1ec-91b42c1a9ff3" />
+    <img width="462" height="418" alt="Image" src="https://github.com/user-attachments/assets/5e7e714e-6e7c-4e06-b1ec-91b42c1a9ff3" />
 
-In the above screenshot _[resource_name]_, _[deployment_name]_, _[API_KEY]_ and [API_VERSION] has to be replaced by the correct values defined in your Azure OpenAI resource.
+    In the above screenshot _[resource_name]_, _[deployment_name]_, _[API_KEY]_ and [API_VERSION] has to be replaced by the correct values defined in your Azure OpenAI resource. 
 The deployment name is the given name of the deployed model within the resource (e.g. _d-fine_azure_gpt-4.1_).
+\
+\
+    You should now be able to see the deployed model in the list of available models and chat with it:
 
-You should now be able to see the deployed model in the list of available models and chat with it:
+    <img width="513" height="226" alt="Image" src="https://github.com/user-attachments/assets/7abca8c4-64df-41ee-bcba-eaae4c2d01da" />
 
-<img width="513" height="226" alt="Image" src="https://github.com/user-attachments/assets/7abca8c4-64df-41ee-bcba-eaae4c2d01da" />
+3. **Connect the MCP Server**: Within Open WebUI, add the running MCP server via `Profile -> Settings -> Tools -> +`:
 
-3. **Connect the MCP Server**: Within Open Web UI, add the running MCP server via `Profile -> Settings -> Tools -> +`:
+    <img width="453" height="240" alt="Image" src="https://github.com/user-attachments/assets/e09cbbd7-a3e6-4680-b89a-f93dad9d2bc8" />
 
-<img width="453" height="240" alt="Image" src="https://github.com/user-attachments/assets/e09cbbd7-a3e6-4680-b89a-f93dad9d2bc8" />
+    Now the tools of the MCP Server are available in the chat via a toolbox under the input field:
 
-Now the tools of the MCP Server are available in the chat via a toolbox under the input field:
+    <img width="658" height="327" alt="Image" src="https://github.com/user-attachments/assets/c7531e03-e0db-4994-b94d-ebdb171013cb" />
 
-<img width="658" height="327" alt="Image" src="https://github.com/user-attachments/assets/c7531e03-e0db-4994-b94d-ebdb171013cb" />
+4. **Set the system prompt**: The system prompt defines the assistant's role. 
+   - Within Open WebUI, go to `Profile` -> `Admin Panel` -> `Models`. Choose your model and go to the box `Model Parameters` -> `System Prompt`. 
+   - Copy the prompt from the `system_prompt` file which is located in the project root and paste it into the box. 
+   - Click on `Save & Update`.
+
+    Note: You can also set the system prompt model independently in your personal settings. Go to `Profile` -> `Settings` -> `General` and paste the prompt into the field `System Prompt`. 
+
+### Configure LibreChat
+
+After the containers are running, you'll need to configure LibreChat:
+
+1. **Create an LibreChat account**: Navigate to http://localhost:3080 and create an account.
+
+2. **Further Cofiguration**: Currently, LibreChat runs without any modified configurations, i.e. no models or MCP servers are connected. 
+The configuration files as well as documentation will be added soon.
+
+**Note**: A separate file `.env.librechat` contains the environmental variables needed for LibreChat. They do not contain private secrets and do not have to be modified.
 
 ## Troubleshooting
 

@@ -3,7 +3,7 @@
         "DatalandMCP": {
             "type": "stdio",
             "command": "python",
-            "args": ["src/mcp_server.py", "stdio"],
+            "args": ["src/dataland_mcp.py"],
             "env": {
               "DATALAND_MCP_ROOT_DIR": ".",
               "DATALAND_API_KEY": "PLACEHOLDER_DATALAND_API_KEY"
