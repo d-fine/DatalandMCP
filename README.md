@@ -147,7 +147,7 @@ For development purposes, you may want to set up the environment locally without
 Clone this repository to a designated folder via `git clone`.
 
 ### Dataland Client
-- Create a `.env` file at the project root based on the `.env_dummy` file. Set Variable `DATALAND_MCP_ROOT_DIR` to the repository root on your machine and `DATALAND_API_KEY` with your API KEY that you can create as described [here](https://github.com/d-fine/Dataland/wiki/Use-the-API).
+- Create a `.env` file at the project root based on the `.env.example` file. Set Variable `DATALAND_MCP_ROOT_DIR` to the repository root on your machine and `DATALAND_API_KEY` with your API KEY that you can create as described [here](https://github.com/d-fine/Dataland/wiki/Use-the-API).
 - Execute `.\bin\setup_dev_environment.sh` using a Git Bash shell from your repository root.
 
 ### Python MCP SDK
