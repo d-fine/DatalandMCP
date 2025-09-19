@@ -199,17 +199,17 @@ mcpServers:
 endpoints:
   # Azure OpenAI configuration
 #   azureOpenAI:
-#     titleModel: "d-fine-azure-gpt-5" # Model name, e.g. "gpt-5"
+#     titleModel: "" # Model name, e.g. "gpt-5"
 #     plugins: True # Enables plugins
 #     groups:
-#       - group: "dataland-group" # Arbitrary name, e.g. "dataland-group"
+#       - group: "" # Arbitrary name, e.g. "dataland-group"
 #         apiKey: "${AZURE_OPENAI_API_KEY}" # Azure OpenAI API KEY from .env
-#         instanceName: "dataland-mcp-openai-eastus2" # Azure resource name, e.g. "dataland-mcp-resource"
-#         version: "2024-12-01-preview" # API version, e.g. "2024-12-01-preview"
+#         instanceName: "" # Azure resource name, e.g. "dataland-mcp-resource"
+#         version: "" # API version, e.g. "2024-12-01-preview"
 #         models:
-#           d-fine-azure-gpt-5: # Change to a model name that should be displayed in LibreChat, e.g. azure-gpt-5
-#             deploymentName: "d-fine-azure-gpt-5" # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5". NOT as a string.
-#             version: "2024-12-01-preview" # API version same as above, e.g. "2024-12-01-preview"
+#           displayed-model-name: # Change to a model name that should be displayed in LibreChat, e.g. azure-gpt-5
+#             deploymentName: "" # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5".
+#             version: "" # API version same as above, e.g. "2024-12-01-preview"
 
   # assistants:
   #   disableBuilder: false # Disable Assistants Builder Interface by setting to `true`
