@@ -152,8 +152,18 @@ The following steps illustrate how to connect a deployed Azure OpenAI model to L
    As soon as the server is running, LibreChat will be connected to it without restarting the container.
    
 5. **Create a LibreChat account**: Navigate to http://localhost:3080 and create an account.
+   <img width="1949" height="923" alt="image" src="https://github.com/user-attachments/assets/5b105cc6-b243-4fe3-a4a8-714555f04335" />
 
-6. **Navigation within LibreChat**: TBA
+6. **Select a model**: In the top left corner you can choose between different models. Go to Azure OpenAI and select your model:
+   <img width="641" height="493" alt="image" src="https://github.com/user-attachments/assets/b38b86cd-19ad-4eb3-a938-03af68958f61" />
+   
+7. **Select an MCP Server**: Upon successful connection with the MCP Server a button will appear in the chat window. Select **Dataland**
+   <img width="898" height="159" alt="image" src="https://github.com/user-attachments/assets/33eb9c13-df6d-44b5-8905-c2560325b1ba" />
+
+8. **Set the model prompt**: Copy the content of the `system_prompt` file and paste it into the field `Parameters` -> `Custom Instructions`:\
+   (This prompt only applies for the current chat. How to set system prompts will be further investigated.)
+   
+   <img width="468" height="437" alt="image" src="https://github.com/user-attachments/assets/03f5efb7-c1b8-4757-8df1-70745b8585eb" />
 
 **Note**: A separate file `.env.librechat` contains the environmental variables needed for LibreChat. They do not contain private secrets and do not have to be modified.
 
