@@ -127,8 +127,7 @@ The following steps illustrate how to connect a deployed Azure OpenAI model to L
    Go to the `endpoints` section and uncomment the `azureOpenAI` configuration:
    ```bash
    endpoints:
-     # Azure OpenAI configuration
-     azureOpenAI:
+     azureOpenAI: # Azure OpenAI configuration
        titleModel: "" # Model name, e.g. "gpt-5"
        plugins: True # Enables plugins
        groups:
