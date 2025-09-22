@@ -196,7 +196,7 @@ mcpServers:
 #       - /path/to/obsidian/vault
 
 # Definition of custom endpoints
-endpoints:
+# endpoints:
   # Azure OpenAI configuration
 #   azureOpenAI:
 #     titleModel: "" # Model name, e.g. "gpt-5"
