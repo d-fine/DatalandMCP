@@ -169,6 +169,7 @@ mcpServers:
     type: http
     url: http://host.docker.internal:8001/mcp
     timeout: 60000
+
 #   everything:
 #     # type: sse # type can optionally be omitted
 #     url: http://localhost:3001/sse
@@ -197,7 +198,6 @@ mcpServers:
 
 # Definition of custom endpoints
 # endpoints:
-  # Azure OpenAI configuration
 #   azureOpenAI:
 #     titleModel: "" # Model name, e.g. "gpt-5"
 #     plugins: True # Enables plugins
