@@ -81,10 +81,10 @@ interface:
       By using the Website, you acknowledge that you have read these Terms of Service and agree to be bound by them.
 
   endpointsMenu: true
-  modelSelect: true
+  modelSelect: false
   parameters: true
   sidePanel: true
-  presets: true
+  presets: false
   prompts: true
   bookmarks: true
   multiConvo: true
@@ -163,40 +163,60 @@ interface:
 #     - 'librechat.ai'
 #     - 'google.com'
 
-# Example MCP Servers Object Structure
+########################################################################################################################
+
+# DatalandMCP Server Connection
 mcpServers:
   Dataland:
     type: http
     url: http://host.docker.internal:8001/mcp
     timeout: 60000
 
-#   everything:
-#     # type: sse # type can optionally be omitted
-#     url: http://localhost:3001/sse
-#     timeout: 60000  # 1 minute timeout for this server, this is the default timeout for MCP servers.
-#   puppeteer:
-#     type: stdio
-#     command: npx
-#     args:
-#       - -y
-#       - "@modelcontextprotocol/server-puppeteer"
-#     timeout: 300000  # 5 minutes timeout for this server
-#   filesystem:
-#     # type: stdio
-#     command: npx
-#     args:
-#       - -y
-#       - "@modelcontextprotocol/server-filesystem"
-#       - /home/user/LibreChat/
-#     iconPath: /home/user/LibreChat/client/public/assets/logo.svg
-#   mcp-obsidian:
-#     command: npx
-#     args:
-#       - -y
-#       - "mcp-obsidian"
-#       - /path/to/obsidian/vault
+########################################################################################################################
 
-# Definition of custom endpoints
+# Model Specification
+# modelSpecs:
+#   enforce: false
+#   prioritize: true
+#   list:
+#     - name: "dataland-mcp-gpt-X" # Unique identifier, change accordingly
+#       label: "Dataland Assistant (GPT-X)" # Displayed name, change accordingly
+#       default: true
+#       description: "Retrieves and analyzes ESG data from Dataland."
+#       preset:
+#         endpoint: "azureOpenAI"
+#         model: "your_model_here" # Model name of the configured endpoint below
+#         useResponsesApi: true
+#         reasoning_effort: "low"
+#         reasoning_summary: "auto"
+#         web_search: false
+#         greeting: "Hi, how can I assist you with queries regarding ESG data from Dataland?"
+#         promptPrefix: "
+# ### Role
+# You are an assistant to retrieve ESG data reports from Dataland.
+#
+# ### Use-Case
+# The user will use your service to request ESG data (SFDR, EU Taxonomy), specific ESG metrics as well as comparisons and analyses of the retrieved data.
+# Solely fetch the data from Dataland via the provided tools. You must not obtain it from other sources. The values of the report must be provided as reported.
+# If not requested otherwise, provide the full report and do not leave out any sections. You do not have to display the metadata of each data point.
+# It is okay if no data can be found for a specific request, but the user should be let known the reason (e.g. company not found or no report for the requested period).
+#
+# ### Tone
+# Please be professional, polite and concise, but still detailed in your responses.
+#
+# ### Specific Instructions
+# All responses should be structured in an user friendly and readable format, using markdown.
+# Always have a General Information section where it is explicitly stated where you retrieved the data from and provide the URL to the source of the retrieved data.
+# If report data is retrieved provide sections of the report starting with the General Information section containing Company Name, Reporting Framework, Reporting Period and Dataland URL.
+# The URL should be displayed in markdown format [Company_Name Report_Type Reporting_Period Dataland](URL).
+# End your response with a summary if the response is long.
+#
+# If a tool call result leads to another tool call, add a short summary of the relevant result before making the next call.
+# "
+
+########################################################################################################################
+
+# Azure OpenAI connection
 # endpoints:
 #   azureOpenAI:
 #     titleModel: "" # Model name, e.g. "gpt-5"
@@ -210,6 +230,8 @@ mcpServers:
 #           displayed-model-name: # Change to a model name that should be displayed in LibreChat, e.g. azure-gpt-5
 #             deploymentName: "" # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5".
 #             version: "" # API version same as above, e.g. "2024-12-01-preview"
+
+########################################################################################################################
 
   # assistants:
   #   disableBuilder: false # Disable Assistants Builder Interface by setting to `true`
