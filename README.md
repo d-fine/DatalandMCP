@@ -141,11 +141,9 @@ The following steps illustrate how to connect an Azure OpenAI model to LibreChat
    
    <img width="1651" height="927" alt="image" src="https://github.com/user-attachments/assets/319b93d2-059c-40b5-b315-a0779f23efaf" />
    
-7. **Select the Dataland MCP server**: Upon successful connection with the MCP server, a button will appear in the chat window. Select **Dataland**.
+7. **Select the Dataland MCP server**: Upon successful connection with the MCP server, a button will appear in the chat window. Select **Dataland** and start chatting.
    
    <img width="898" height="159" alt="image" src="https://github.com/user-attachments/assets/33eb9c13-df6d-44b5-8905-c2560325b1ba" />
-
-8. **Start chatting**
 
 ### Configure Open WebUI
 
