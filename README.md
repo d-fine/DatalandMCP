@@ -129,7 +129,6 @@ The following steps illustrate how to connect a deployed Azure OpenAI model to L
    endpoints:
      azureOpenAI: # Azure OpenAI configuration
        titleModel: "" # Model name, e.g. "gpt-5"
-       plugins: True # Enables plugins
        groups:
          - group: "" # Arbitrary name, e.g. "dataland-group"
            apiKey: "${AZURE_OPENAI_API_KEY}" # Azure OpenAI API KEY from .env
