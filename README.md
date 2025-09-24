@@ -108,8 +108,9 @@ The following steps illustrate how to connect an Azure OpenAI model to LibreChat
 3. **Add model to config file**: Open the `librechat.yaml` file located in the project root. 
    Go to the `endpoints` object and uncomment the `azureOpenAI` configuration:
    ```yaml
+   # Azure OpenAI configuration
    endpoints:
-     azureOpenAI: # Azure OpenAI configuration
+     azureOpenAI:
        titleModel: "" # Name of the deployed model in Azure, e.g. "d-fine-azure-gpt-5".
        groups:
          - group: "" # Arbitrary name, e.g. "dataland-group"
