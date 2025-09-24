@@ -193,7 +193,7 @@ The deployment name is the given name of the deployed model within the resource 
    - Copy the prompt from the `system_prompt` file located in the project root and paste it into the box. 
    - Click on `Save & Update`.
 
-   Note: You can also set the system prompt independently in your personal settings. Go to `Profile` -> `Settings` -> `General` and paste the prompt into the `System Prompt` field.
+   **Note**: You can also set the system prompt independently in your personal settings. Go to `Profile` -> `Settings` -> `General` and paste the prompt into the `System Prompt` field.
 
 ## Troubleshooting
 
