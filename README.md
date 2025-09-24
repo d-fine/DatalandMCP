@@ -12,7 +12,6 @@ Additionally, the open-source chat clients [LibreChat](https://www.librechat.ai/
 - [Troubleshooting](#troubleshooting)
 - [Development Setup](#development-setup)
   - [Dataland Client](#dataland-client)
-  - [Python MCP SDK](#python-mcp-sdk)
 
 ## Prerequisites
 - Have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed
@@ -22,7 +21,7 @@ Additionally, the open-source chat clients [LibreChat](https://www.librechat.ai/
 
 The easiest way to get started is by using Docker Compose, which starts the MCP server and the MCP hosts (LibreChat and Open WebUI) with one command.
 
-**Note**: LibreChat requires some configuration prior to launching the containers. See instructions [below](#configure-librechat). 
+**Note**: LibreChat requires some configuration prior to launching the service. See instructions [below](#configure-librechat). 
 
 Create a `.env` file at the project root with your Dataland API key:
 ```env
@@ -36,17 +35,17 @@ You can create your API key as described [here](https://github.com/d-fine/Datala
 From the repository root directory, start both the MCP server and hosts:
 
 ```bash
-docker compose up
+docker compose --profile all -d
 ```
 
 To run in the background:
 ```bash
-docker compose up -d
+docker compose --profile all up -d
 ```
 
 To rebuild and start:
 ```bash
-docker compose up --build
+docker compose --profile all up --build
 ```
 
 After successful launch:
@@ -56,23 +55,38 @@ After successful launch:
 
 To stop the services:
 ```bash
-docker compose down
+docker compose --profile all down
 ```
 
-**Note**: Open WebUI data (including user accounts, settings, and configurations) is persisted in a Docker volume named `datalandmcp_open-webui`. This means your Open WebUI setup will be preserved between container restarts. If you need to reset Open WebUI to a fresh state, you must explicitly delete this volume:
+#### Startup Options
+
+There are three different profiles to only launch and stop specific services. These can be triggered via different `--profile` flags. 
+
+| `--profile` | DatalandMCP | LibreChat | Open WebUI |
+|:------------|:-----------:|:---------:|:----------:|
+| `mcp`       |      ✅      |     ❌     |     ❌      |
+| `librechat` |      ✅      |     ✅     |     ❌      |
+| `all`       |      ✅      |     ✅     |     ✅      |
+
+#### Docker Volumes (User data, configurations, ...)
+
+LibreChat and Open WebUI store specific data in volumes that are preserved between service restarts.
 
 ```bash
-# Stop the services first
-docker compose down
+# List all volumes
+docker volume ls
 
-# Remove the Open WebUI volume to start fresh
-docker volume rm datalandmcp_open-webui
+# Stop the services first
+docker compose --profile all down
+
+# Remove specific volumes to start fresh
+docker volume rm <volume-name1> <volume_name2>
 
 # Start services again
-docker compose up
+docker compose --profile all up -d
 ```
 
-The same holds for LibreChat, which uses several named volumes that contain user accounts and settings. Unlike Open WebUI, the base configuration of LibreChat (e.g., API connections) is set via a config file at the project root.
+**Note**: Open WebUI data (including user accounts, settings, and configurations) is persisted in its Docker volume. LibreChat also stores user account data as well a backend data in its volumes but unlike Open WebUI, the base configuration (e.g., API connections) is set via a config file at the project root.
 
 ### Configure LibreChat
 
@@ -81,7 +95,7 @@ The following steps illustrate how to connect an Azure OpenAI model to LibreChat
 
 **Note**: A separate file `.env.librechat` contains the environment variables needed for LibreChat. They do not contain private secrets and do not need to be modified.
 
-1. **Stop running containers**:
+1. **Stop running services**:
    ```bash
    docker compose down
    ```
@@ -94,23 +108,21 @@ The following steps illustrate how to connect an Azure OpenAI model to LibreChat
 3. **Add model to config file**: Open the `librechat.yaml` file located in the project root. 
    Go to the `endpoints` object and uncomment the `azureOpenAI` configuration:
    ```yaml
-   # Azure OpenAI connection
    endpoints:
-     azureOpenAI:
-       titleModel: "" # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5".
-       plugins: True # Enables plugins
+     azureOpenAI: # Azure OpenAI configuration
+       titleModel: "" # Name of the deployed model in Azure, e.g. "d-fine-azure-gpt-5".
        groups:
          - group: "" # Arbitrary name, e.g. "dataland-group"
            apiKey: "${AZURE_OPENAI_API_KEY}" # Azure OpenAI API KEY from .env
            instanceName: "" # Azure resource name, e.g. "dataland-mcp-resource"
            version: "" # API version, e.g. "2024-12-01-preview"
            models:
-             displayed-model-name: # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5".
-               deploymentName: "" # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5".
+             displayed-model-name: # Change to name of the deployed model in Azure, e.g. "d-fine-azure-gpt-5".
+               deploymentName: "" # Name of the deployed model in Azure, e.g. "d-fine-azure-gpt-5".
                version: "" # API version same as above, e.g. "2024-12-01-preview"
    ```
 
-   Fill out the configuration with the corresponding values of your deployed model.
+   Fill out the configuration with the corresponding values of your deployed model. Note that the `displayed-model-name` key also needs to be changed to your model name.
 
 4. **Add model specifications**: Within the `librechat.yaml` file, go to the `modelSpecs` object and uncomment the configuration.
 
@@ -130,14 +142,14 @@ The following steps illustrate how to connect an Azure OpenAI model to LibreChat
            ...
    ```
 
-   For `model` use the chosen name for `titleModel` from the previous step. Amend `name` and `label` according to the used GPT version.
+   For `model` use the name of the deployed model (`titleModel` from the previous step). Amend `name` and `label` according to the used GPT version.
    The other values must **not** be changed.
 
-5. **Start the containers**:
+5. **Start the services**:
    ```bash
    docker compose up -d
    ```
-   **Note**: Initially, LibreChat may report that the connection to the MCP server has failed. This occurs because the LibreChat container starts more quickly than the DatalandMCP container; hence, the MCP server might not yet be running. As soon as the server is running, LibreChat will connect without requiring a container restart.
+   **Note**: Initially, LibreChat may report that the connection to the MCP server has failed. This occurs because the LibreChat service starts more quickly than the DatalandMCP service; hence, the MCP server might not yet be running. As soon as the server is running, LibreChat will connect without requiring a restart.
    
 6. **Create a LibreChat account**: Navigate to http://localhost:3080 and create an account.
    
@@ -149,7 +161,7 @@ The following steps illustrate how to connect an Azure OpenAI model to LibreChat
 
 ### Configure Open WebUI
 
-After the containers are running, you'll need to configure Open WebUI:
+After the services are running, you'll need to configure Open WebUI:
 
 1. **Create an Open WebUI account**: Navigate to http://localhost:8080 and create an account.
 
