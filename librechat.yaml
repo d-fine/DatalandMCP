@@ -215,7 +215,7 @@ mcpServers:
 # Azure OpenAI connection
 # endpoints:
 #   azureOpenAI:
-#     titleModel: "" # Model name, e.g. "gpt-5"
+#     titleModel: "" # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5".
 #     plugins: True # Enables plugins
 #     groups:
 #       - group: "" # Arbitrary name, e.g. "dataland-group"
@@ -223,7 +223,7 @@ mcpServers:
 #         instanceName: "" # Azure resource name, e.g. "dataland-mcp-resource"
 #         version: "" # API version, e.g. "2024-12-01-preview"
 #         models:
-#           displayed-model-name: # Change to a model name that should be displayed in LibreChat, e.g. azure-gpt-5
+#           displayed-model-name: # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5".
 #             deploymentName: "" # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5".
 #             version: "" # API version same as above, e.g. "2024-12-01-preview"
 

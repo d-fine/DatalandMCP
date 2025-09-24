@@ -94,21 +94,23 @@ The following steps illustrate how to connect an Azure OpenAI model to LibreChat
 3. **Add model to config file**: Open the `librechat.yaml` file located in the project root. 
    Go to the `endpoints` object and uncomment the `azureOpenAI` configuration:
    ```yaml
+   # Azure OpenAI connection
    endpoints:
-     azureOpenAI: # Azure OpenAI configuration
-       titleModel: "" # Model name, e.g. "gpt-5"
+     azureOpenAI:
+       titleModel: "" # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5".
+       plugins: True # Enables plugins
        groups:
          - group: "" # Arbitrary name, e.g. "dataland-group"
            apiKey: "${AZURE_OPENAI_API_KEY}" # Azure OpenAI API KEY from .env
            instanceName: "" # Azure resource name, e.g. "dataland-mcp-resource"
            version: "" # API version, e.g. "2024-12-01-preview"
            models:
-             displayed-model-name: # Change to a model name that should be displayed in LibreChat, e.g. azure-gpt-5
+             displayed-model-name: # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5".
                deploymentName: "" # Change to the deployed model name in Azure, e.g. "d-fine-azure-gpt-5".
                version: "" # API version same as above, e.g. "2024-12-01-preview"
    ```
 
-   Fill out the configuration with the corresponding values of your deployed model. Note that the `displayed-model-name` key can be changed to any desired name.
+   Fill out the configuration with the corresponding values of your deployed model.
 
 4. **Add model specifications**: Within the `librechat.yaml` file, go to the `modelSpecs` object and uncomment the configuration.
 
