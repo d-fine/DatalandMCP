@@ -12,22 +12,22 @@ From the repository root directory:
 
 1. **Start the MCP server with Swagger UI:**
    ```bash
-   docker-compose up
+   docker compose up
    ```
 
 2. **Build and start:**
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
 
-3. **Run in background:**
+3. **Run in the background:**
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 ### Accessing the Service
 
-- **Swagger UI**: Available at `http://localhost:8000`
+- **Swagger UI**: Available at `http://localhost:8000/DatalandMCP/docs`
 
 ### Container Behavior
 
@@ -39,12 +39,12 @@ The container will automatically:
 ### Stopping the Container
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### Alternative: Direct Docker Commands
 
-If you prefer to use Docker directly instead of docker-compose:
+If you prefer to use Docker directly instead of `docker compose`:
 
 ```bash
 # Build the image
