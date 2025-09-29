@@ -1,0 +1,14 @@
+name: Dummy CI
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dummy job
+        run: echo "Dummy workflow"
