@@ -1,0 +1,14 @@
+name: Dummy CD
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dummy Job
+        run: echo "Dummy deployment performed"
