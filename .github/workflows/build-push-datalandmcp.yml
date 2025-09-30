@@ -3,7 +3,7 @@ name: Build and Push datalandmcp
 on:
   push:
     branches:
-      - main
+      - '**' # TODO: Change to main before merging
     paths:
       - 'mcp_server/**'
       - '.github/workflows/CI.yml'
