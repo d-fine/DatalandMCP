@@ -24,7 +24,7 @@ jobs:
       - name: Add EC2 to known hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H -T 15 ${{ secrets.AWS_EC2_HOST }} 2>&1 | tee -a ~/.ssh/keyscan.log
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
       - name: Execute remote command
         run: |
