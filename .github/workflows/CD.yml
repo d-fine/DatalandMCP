@@ -1,4 +1,4 @@
-name: Deploy DatalandMCP server
+name: Dummy CD
 
 on:
   push:
@@ -7,26 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
-    name: Deploy to AWS EC2
+  placeholder:
     runs-on: ubuntu-latest
-    environment: production
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-
-      - name: Configure SSH agent
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-
-      - name: Add EC2 to known hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Execute remote command
-        run: |
-          ssh "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" \
-            "echo 'Connected to EC2 instance'"
+      - name: Dummy Job
+        run: echo "Dummy deployment performed"
