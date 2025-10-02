@@ -31,9 +31,6 @@ REMOTE_PATH="/home/${USER}/DatalandMCP"
 
 echo "Deploying DatalandMCP to ${USER}@${HOST}..."
 
-# Pull the latest DatalandMCP image
-ssh "${USER}@${HOST}" "sudo docker pull ghcr.io/d-fine/datalandmcp:latest"
-
 # Create the directory if it doesn't exist
 ssh "${USER}@${HOST}" "[ -d ${REMOTE_PATH} ] || mkdir -p ${REMOTE_PATH}"
 
