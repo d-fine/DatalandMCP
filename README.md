@@ -58,7 +58,7 @@ docker compose --profile all down
 
 #### Startup Options
 
-There are three different profiles to only launch and stop specific services. These can be triggered via different `--profile` flags. 
+There are two different profiles to only launch and stop specific services. These can be triggered via the `--profile` flag. 
 
 | `--profile` | DatalandMCP | LibreChat |
 |:------------|:-----------:|:---------:|
