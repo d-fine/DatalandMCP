@@ -28,7 +28,7 @@ services:
     depends_on:
       - mongodb
       - rag_api
-    image: ghcr.io/danny-avila/librechat-dev:latest
+    image: ghcr.io/danny-avila/librechat:latest
     profiles: [all]
     restart: always
     user: "${UID:-}:${GID:-}"
@@ -47,6 +47,9 @@ services:
       - type: bind
         source: ./.env.librechat
         target: /app/.env
+      - type: bind
+        source: ./librechat.yaml
+        target: /app/librechat.yaml
       - librechat_images:/app/client/public/images
       - librechat_uploads:/app/uploads
       - librechat_logs:/app/api/logs
