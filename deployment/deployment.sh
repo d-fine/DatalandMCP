@@ -32,17 +32,17 @@ REMOTE_PATH="/home/${USER}/DatalandMCP"
 echo "Deploying DatalandMCP to ${USER}@${HOST}..."
 
 # Pull the latest DatalandMCP image
-ssh -i "${USER}@${HOST}" "sudo docker pull ghcr.io/d-fine/datalandmcp:latest"
+ssh "${USER}@${HOST}" "sudo docker pull ghcr.io/d-fine/datalandmcp:latest"
 
 # Create the directory if it doesn't exist
-ssh -i "${USER}@${HOST}" "[ -d ${REMOTE_PATH} ] || mkdir -p ${REMOTE_PATH}"
+ssh "${USER}@${HOST}" "[ -d ${REMOTE_PATH} ] || mkdir -p ${REMOTE_PATH}"
 
 # Create the .env file
-ssh -i "${USER}@${HOST}" "printf 'DATALAND_API_KEY=${API_KEY}' > ${REMOTE_PATH}/.env"
-ssh -i "${USER}@${HOST}" "chmod 600 ${REMOTE_PATH}/.env"
+ssh "${USER}@${HOST}" "printf 'DATALAND_API_KEY=${API_KEY}' > ${REMOTE_PATH}/.env"
+ssh "${USER}@${HOST}" "chmod 600 ${REMOTE_PATH}/.env"
 
 # Copy the docker-compose.yml file
-scp -i docker-compose.yml "${USER}@${HOST}:${REMOTE_PATH}/docker-compose.yml"
+scp docker-compose.yml "${USER}@${HOST}:${REMOTE_PATH}/docker-compose.yml"
 
 # Change to working directory and start DatalandMCP service
-ssh -i "$SSH_KEY" "${USER}@${HOST}" "cd ${REMOTE_PATH} && sudo docker compose --profile mcp up -d"
+ssh "${USER}@${HOST}" "cd ${REMOTE_PATH} && sudo docker compose --profile mcp up -d"
