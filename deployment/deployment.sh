@@ -1,27 +1,48 @@
 #!/bin/bash
 set -e
 
-EC2_HOST=${EC2_HOST:-172.20.14.96}
-EC2_USER=${EC2_USER:-ubuntu}
-SSH_KEY=${SSH_KEY:-~/.ssh/id_ed25519_AWS_MCP}
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --host)
+      HOST="$2"
+      shift 2
+      ;;
+    --user)
+      USER="$2"
+      shift 2
+      ;;
+    --api-key)
+      API_KEY="$2"
+      shift 2
+      ;;
+    --help)
+      echo "Usage: $0 [--host HOST] [--user USER] [--api-key DATALAND_API_KEY]"
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1" >&2
+      echo "Usage: $0 [--host HOST] [--user USER] [--api-key DATALAND_API_KEY]" >&2
+      exit 1
+      ;;
+  esac
+done
 
-echo "Deploying DatalandMCP to EC2..."
+REMOTE_PATH="/home/${USER}/DatalandMCP"
 
-# Update and install Docker and Docker Compose
-ssh -i "$SSH_KEY" "${EC2_USER}@${EC2_HOST}" "sudo apt update && sudo apt upgrade -y && sudo apt install docker.io docker-compose-plugin -y"
+echo "Deploying DatalandMCP to ${USER}@${HOST}..."
 
 # Pull the latest DatalandMCP image
-ssh -i "$SSH_KEY" "${EC2_USER}@${EC2_HOST}" "sudo docker pull ghcr.io/d-fine/datalandmcp:latest"
+ssh -i "${USER}@${HOST}" "sudo docker pull ghcr.io/d-fine/datalandmcp:latest"
 
 # Create the directory if it doesn't exist
-ssh -i "$SSH_KEY" "${EC2_USER}@${EC2_HOST}" "[ -d /home/${EC2_USER}/DatalandMCP ] || mkdir -p /home/${EC2_USER}/DatalandMCP"
+ssh -i "${USER}@${HOST}" "[ -d ${REMOTE_PATH} ] || mkdir -p ${REMOTE_PATH}"
 
-# Secure copy the .env and docker-compose.yml files
-scp -i "$SSH_KEY" .env.github "${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/DatalandMCP/.env"
-scp -i "$SSH_KEY" docker-compose.yml "${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/DatalandMCP/docker-compose.yml"
+# Create the .env file
+ssh -i "${USER}@${HOST}" "printf 'DATALAND_API_KEY=${API_KEY}' > ${REMOTE_PATH}/.env"
+ssh -i "${USER}@${HOST}" "chmod 600 ${REMOTE_PATH}/.env"
 
-# Make the .env file readable only by the owner
-ssh -i "$SSH_KEY" "${EC2_USER}@${EC2_HOST}" "chmod 600 /home/${EC2_USER}/DatalandMCP/.env"
+# Copy the docker-compose.yml file
+scp -i docker-compose.yml "${USER}@${HOST}:${REMOTE_PATH}/docker-compose.yml"
 
 # Change to working directory and start DatalandMCP service
-ssh -i "$SSH_KEY" "${EC2_USER}@${EC2_HOST}" "cd /home/${EC2_USER}/DatalandMCP && sudo docker compose --profile mcp up -d"
+ssh -i "$SSH_KEY" "${USER}@${HOST}" "cd ${REMOTE_PATH} && sudo docker compose --profile mcp up -d"
