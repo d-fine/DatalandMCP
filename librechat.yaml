@@ -202,6 +202,8 @@ mcpServers:
 # ### Tone
 # Please be professional, polite and concise, but still detailed in your responses.
 # ### Specific Instructions
+# If you can't reach the Dataland MCP-Server make this clear to the user and ask the user to activate Dataland as MCP Server.
+# If no reporting year is specified, retrieve the report for the most recent available year.
 # All responses should be structured in an user friendly and readable format, using markdown.
 # Always have a General Information section where it is explicitly stated where you retrieved the data from and provide the URL to the source of the retrieved data.
 # If report data is retrieved provide sections of the report starting with the General Information section containing Company Name, Reporting Framework, Reporting Period and Dataland URL.

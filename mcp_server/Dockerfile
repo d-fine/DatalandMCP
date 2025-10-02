@@ -1,5 +1,5 @@
 # Use Ubuntu base image and install both OpenJDK and Python 3.13
-FROM eclipse-temurin:21.0.7_6-jre-alpine as base
+FROM eclipse-temurin:21.0.7_6-jre-alpine AS base
 
 # Set working directory
 WORKDIR /app

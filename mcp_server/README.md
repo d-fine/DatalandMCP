@@ -12,17 +12,17 @@ From the repository root directory:
 
 1. **Start the MCP server with Swagger UI:**
    ```bash
-   docker compose up
+   docker compose --profile mcp up
    ```
 
 2. **Build and start:**
    ```bash
-   docker compose up --build
+   docker compose --profile mcp up --build
    ```
 
 3. **Run in the background:**
    ```bash
-   docker compose up -d
+   docker compose --profile mcp up -d
    ```
 
 ### Accessing the Service
@@ -34,12 +34,13 @@ From the repository root directory:
 The container will automatically:
 1. Generate the latest Dataland API clients
 2. Install Python dependencies
-3. Start the MCP server with Swagger UI on port 8000
+3. Stream the MCP server directly via http on port 8001
+4. Additionally, start the MCP server with Swagger UI on port 8000
 
 ### Stopping the Container
 
 ```bash
-docker compose down
+docker compose --profile mcp down
 ```
 
 ### Alternative: Direct Docker Commands
