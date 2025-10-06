@@ -1,6 +1,6 @@
 services:
   dataland-mcp:
-    build: ghcr.io/d-fine/datalandmcp:latest
+    image: ghcr.io/d-fine/datalandmcp:latest
     ports:
       - "8000:8000"
       - "8001:8001"
