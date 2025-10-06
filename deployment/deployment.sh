@@ -12,7 +12,7 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     --api-key)
-      API_KEY="$2"
+      DATALAND_API_KEY="$2"
       shift 2
       ;;
     --help)
@@ -35,7 +35,7 @@ echo "Deploying DatalandMCP to ${USER}@${HOST}..."
 ssh "${USER}@${HOST}" "[ -d ${REMOTE_PATH} ] || mkdir -p ${REMOTE_PATH}"
 
 # Create the .env file
-ssh "${USER}@${HOST}" "printf 'DATALAND_API_KEY=${API_KEY}' > ${REMOTE_PATH}/.env"
+ssh "${USER}@${HOST}" "printf 'DATALAND_API_KEY=${DATALAND_API_KEY}' > ${REMOTE_PATH}/.env"
 ssh "${USER}@${HOST}" "chmod 600 ${REMOTE_PATH}/.env"
 
 # Copy the docker-compose.yml file
