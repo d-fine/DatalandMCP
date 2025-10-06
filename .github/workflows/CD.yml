@@ -26,7 +26,9 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Execute remote command
+      - name: Deploy DatalandMCP service
         run: |
-          ssh "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" \
-            "echo 'Connected to EC2 instance'"
+          bash deployment/deployment.sh \
+          --host ${{ secrets.EC2_HOST_QALAB }} \
+          --user ${{ secrets.EC2_USER }} \
+          --api-key ${{ secrets.DATALAND_API_KEY }}
