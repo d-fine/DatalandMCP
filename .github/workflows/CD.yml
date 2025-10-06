@@ -19,14 +19,14 @@ jobs:
       - name: Configure SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.AWS_EC2_SSH_KEY }}
+          ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY  }}
 
       - name: Add EC2 to known hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.AWS_EC2_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
       - name: Execute remote command
         run: |
-          ssh "${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_HOST }}" \
+          ssh "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" \
             "echo 'Connected to EC2 instance'"
