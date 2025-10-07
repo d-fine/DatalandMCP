@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to AWS EC2
+    name: Deploy to OTC Server
     runs-on: ubuntu-latest
     environment: production
 
@@ -16,22 +16,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Boot up EC2 machine
-        run: curl https://try7eflmqd.execute-api.eu-central-1.amazonaws.com/default?instance=i-09ed9f8d262e64854
-
       - name: Configure SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY  }}
+          ssh-private-key: ${{ secrets.OTC_SSH_PRIVATE_KEY  }}
 
-      - name: Add EC2 to known hosts
+      - name: Add OTC to known hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.OTC_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy DatalandMCP service
         run: |
           bash deployment/deployment.sh \
-          --host ${{ secrets.EC2_HOST }} \
-          --user ${{ secrets.EC2_USER }} \
+          --host ${{ secrets.OTC_HOST }} \
+          --user ${{ secrets.OTC_USER }} \
           --api-key ${{ secrets.DATALAND_API_KEY }}
