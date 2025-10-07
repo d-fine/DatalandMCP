@@ -27,11 +27,11 @@ jobs:
       - name: Add EC2 to known hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.EC2_HOST_QALAB }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy DatalandMCP service
         run: |
           bash deployment/deployment.sh \
-          --host ${{ secrets.EC2_HOST_QALAB }} \
+          --host ${{ secrets.EC2_HOST }} \
           --user ${{ secrets.EC2_USER }} \
           --api-key ${{ secrets.DATALAND_API_KEY }}
