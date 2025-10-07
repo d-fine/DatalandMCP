@@ -16,6 +16,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
+      - name: Boot up EC2 machine
+        run: curl https://try7eflmqd.execute-api.eu-central-1.amazonaws.com/default?instance=i-09ed9f8d262e64854
+
       - name: Configure SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
