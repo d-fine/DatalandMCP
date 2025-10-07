@@ -34,21 +34,12 @@ You can create your API key as described [here](https://github.com/d-fine/Datala
 From the repository root directory, start both the MCP server and host:
 
 ```bash
-docker compose --profile all -d
-```
-
-To run in the background:
-```bash
-docker compose --profile all up -d
-```
-
-To rebuild and start:
-```bash
-docker compose --profile all up --build
+./deployment/local_deployment.sh --profile all
 ```
 
 After successful launch:
 - LibreChat will be available at http://localhost:3080
+- DatalandMCP server streams via http://localhost:8001
 - MCP server documentation (Swagger UI) will be accessible at http://localhost:8000/DatalandMCP/docs
 
 To stop the services:
@@ -80,7 +71,7 @@ docker compose --profile all down
 docker volume rm <volume-name1> <volume_name2>
 
 # Start services again
-docker compose --profile all up -d
+./deployment/local_deployment.sh --profile all
 ```
 
 ### Configure LibreChat
@@ -143,7 +134,7 @@ The following steps illustrate how to connect an Azure OpenAI model to LibreChat
 
 5. **Start the services**:
    ```bash
-   docker compose --profile all up -d
+   ./deployment/local_deployment.sh --profile all
    ```
    **Note**: Initially, LibreChat may report that the connection to the MCP server has failed. This occurs because the LibreChat service starts more quickly than the DatalandMCP service; hence, the MCP server might not yet be running. As soon as the server is running, LibreChat will connect without requiring a restart.
    
@@ -173,6 +164,7 @@ Adjust the memory allocation based on your system's available RAM. After creatin
 ## Development Setup
 
 For development purposes, you may want to set up the environment locally without Docker.
+If using Docker, make sure to push local commits in order to pull the latest image with the correct hash.
 
 ### Prerequisites for Development
 - Have Python 3.11 or 3.12 installed
