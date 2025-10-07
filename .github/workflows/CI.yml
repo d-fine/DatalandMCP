@@ -3,7 +3,7 @@ name: Build and Push datalandmcp
 on:
   push:
     branches:
-      - main
+      - '**'
     paths:
       - 'mcp_server/**'
       - '.github/workflows/CI.yml'
@@ -39,8 +39,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=tag
-            type=sha
-            type=raw,value=latest
+            type=sha, format=long
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
