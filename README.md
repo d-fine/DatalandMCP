@@ -164,7 +164,6 @@ Adjust the memory allocation based on your system's available RAM. After creatin
 ## Development Setup
 
 For development purposes, you may want to set up the environment locally without Docker.
-If using Docker, make sure to push local commits in order to pull the latest image with the correct hash.
 
 ### Prerequisites for Development
 - Have Python 3.11 or 3.12 installed
