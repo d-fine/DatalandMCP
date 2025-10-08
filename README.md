@@ -39,7 +39,7 @@ From the repository root directory, start both the MCP server and host:
 
 After successful launch:
 - LibreChat will be available at http://localhost:3080
-- DatalandMCP server streams via http://localhost:8001
+- DatalandMCP server streams via http://localhost:8001/mcp
 - MCP server documentation (Swagger UI) will be accessible at http://localhost:8000/DatalandMCP/docs
 
 To stop the services:
@@ -49,12 +49,15 @@ docker compose --profile all down
 
 #### Startup Options
 
-There are two different profiles to only launch and stop specific services. These can be triggered via the `--profile` flag. 
+There are three different profiles to only launch and stop specific services. These can be triggered via the `--profile` flag. 
 
 | `--profile` | DatalandMCP | LibreChat |
 |:------------|:-----------:|:---------:|
 | `mcp`       |      ✅      |     ❌     |
+| `librechat` |      ❌      |     ✅     |
 | `all`       |      ✅      |     ✅     |
+
+**Note**: The startup option `librechat` is to be used if an instance of the MCP server is deployed on a remote machine and the user only wants to run LibreChat locally.
 
 #### Docker Volumes (User data, configurations, ...)
 
@@ -76,10 +79,23 @@ docker volume rm <volume-name1> <volume_name2>
 
 ### Configure LibreChat
 
-LibreChat can be configured via a `librechat.yaml` file in the project root. The DatalandMCP server is already configured. 
-The following steps illustrate how to connect an Azure OpenAI model to LibreChat.
+LibreChat can be configured via a `librechat.yaml` file in the project root. 
 
 **Note**: A separate file `.env.librechat` contains the environment variables needed for LibreChat. They do not contain private secrets and do not need to be modified.
+
+The DatalandMCP server is already configured in LibreChat which expects the server to run on port 8001.
+Using other ports will require to amend the port also in the `librechat.yaml` file.
+
+```yaml
+# DatalandMCP Server Connection
+mcpServers:
+  Dataland:
+    type: http
+    url: http://host.docker.internal:8001/mcp
+    timeout: 60000
+```
+
+The following steps illustrate how to connect an Azure OpenAI model to LibreChat.
 
 1. **Stop running services**:
    ```bash

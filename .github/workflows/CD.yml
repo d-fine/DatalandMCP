@@ -1,4 +1,4 @@
-name: Dummy CD
+name: Deploy DatalandMCP server
 
 on:
   push:
@@ -6,9 +6,32 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  DATALAND_MCP_TAG: ${{ github.sha }}
+
 jobs:
-  placeholder:
+  deploy:
+    name: Deploy to OTC Server
     runs-on: ubuntu-latest
+
     steps:
-      - name: Dummy Job
-        run: echo "Dummy deployment performed"
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Configure SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.OTC_SSH_PRIVATE_KEY }}
+
+      - name: Add OTC to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.OTC_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy DatalandMCP service
+        run: |
+          bash deployment/deployment.sh \
+          --host ${{ secrets.OTC_HOST }} \
+          --user ${{ secrets.OTC_USER }} \
+          --api-key ${{ secrets.DATALAND_API_KEY }} \
+          --tag ${{ env.DATALAND_MCP_TAG }}
