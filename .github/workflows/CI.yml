@@ -28,6 +28,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   build-and-push:
+    needs: sonar-scan
     name: Build and push image
     runs-on: ubuntu-latest
     permissions:
