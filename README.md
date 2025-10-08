@@ -85,7 +85,7 @@ The DatalandMCP server is already configured and LibreChat expects the server to
 
 1. **Stop running services**:
    ```bash
-   docker compose --profile all down
+   docker compose --profile librechat down
    ```
 
 2. **Add API key**: Add the `API_KEY` of the deployed model to the `.env` file:
@@ -136,7 +136,7 @@ The DatalandMCP server is already configured and LibreChat expects the server to
 
 5. **Start the services**:
    ```bash
-   ./deployment/local_deployment.sh --profile all
+   ./deployment/local_deployment.sh --profile librechat
    ```
    **Note**: Initially, LibreChat may report that the connection to the MCP server has failed. This occurs because the LibreChat service starts more quickly than the DatalandMCP service; hence, the MCP server might not yet be running. As soon as the server is running, LibreChat will connect without requiring a restart.
    
