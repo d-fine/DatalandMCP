@@ -19,7 +19,8 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-TAG=sha-$(git rev-parse HEAD)
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+TAG=sha-$(git rev-parse origin/${BRANCH})
 
 echo "Using image tag ${TAG}"
 export DATALAND_MCP_TAG=${TAG}
