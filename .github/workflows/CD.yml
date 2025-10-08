@@ -4,11 +4,15 @@ on:
   workflow_dispatch:
 
 env:
+  HOST: ${{ secrets.OTC_HOST }}
+  USER: ${{ secrets.OTC_USER }}
+  SSH_PRIVATE_KEY: ${{ secrets.OTC_SSH_PRIVATE_KEY }}
+  DATALAND_API_KEY: ${{ secrets.DATALAND_API_KEY }}
   DATALAND_MCP_TAG: ${{ github.sha }}
 
 jobs:
   deploy:
-    name: Deploy to OTC Server
+    name: Deploy to Server
     runs-on: ubuntu-latest
 
     steps:
@@ -18,17 +22,17 @@ jobs:
       - name: Configure SSH agent
         uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.0
         with:
-          ssh-private-key: ${{ secrets.OTC_SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ env.SSH_PRIVATE_KEY }}
 
       - name: Add OTC to known hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.OTC_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ env.HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy DatalandMCP service
         run: |
           bash deployment/deployment.sh \
-          --host ${{ secrets.OTC_HOST }} \
-          --user ${{ secrets.OTC_USER }} \
-          --api-key ${{ secrets.DATALAND_API_KEY }} \
+          --host ${{ env.HOST }} \
+          --user ${{ env.USER }} \
+          --api-key ${{ env.DATALAND_API_KEY }} \
           --tag ${{ env.DATALAND_MCP_TAG }}
