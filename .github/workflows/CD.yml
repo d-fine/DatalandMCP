@@ -21,7 +21,7 @@ jobs:
       - name: Configure SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.OTC_SSH_PRIVATE_KEY  }}
+          ssh-private-key: ${{ secrets.OTC_SSH_PRIVATE_KEY }}
 
       - name: Add OTC to known hosts
         run: |
