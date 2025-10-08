@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  DATALAND_MCP_TAG: ${{ github.sha}}
+  DATALAND_MCP_TAG: ${{ github.sha }}
 
 jobs:
   deploy:
