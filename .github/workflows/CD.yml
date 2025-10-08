@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  DATALAND_MCP_TAG: ${{ github.sha}}
+
 jobs:
   deploy:
     name: Deploy to OTC Server
@@ -31,4 +34,5 @@ jobs:
           bash deployment/deployment.sh \
           --host ${{ secrets.OTC_HOST }} \
           --user ${{ secrets.OTC_USER }} \
-          --api-key ${{ secrets.DATALAND_API_KEY }}
+          --api-key ${{ secrets.DATALAND_API_KEY }} \
+          --tag ${{ env.DATALAND_MCP_TAG }}

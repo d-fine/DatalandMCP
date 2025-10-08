@@ -1,5 +1,5 @@
-#!/bin/bash
-set -e
+#!usr/bin/env bash
+set -euo pipefail
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -15,13 +15,17 @@ while [[ $# -gt 0 ]]; do
       DATALAND_API_KEY="$2"
       shift 2
       ;;
+    --tag)
+      DATALAND_MCP_TAG="$2"
+      shift 2
+      ;;
     --help)
-      echo "Usage: $0 [--host HOST] [--user USER] [--api-key DATALAND_API_KEY]"
+      echo "Usage: $0 [--host HOST] [--user USER] [--api-key DATALAND_API_KEY] [--tag DATALAND_MCP_TAG]"
       exit 0
       ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: $0 [--host HOST] [--user USER] [--api-key DATALAND_API_KEY]" >&2
+      echo "Usage: $0 [--host HOST] [--user USER] [--api-key DATALAND_API_KEY] [--tag DATALAND_MCP_TAG]" >&2
       exit 1
       ;;
   esac
@@ -35,11 +39,11 @@ echo "Deploying DatalandMCP to ${USER}@${HOST}..."
 ssh "${USER}@${HOST}" "[ -d ${REMOTE_PATH} ] || mkdir -p ${REMOTE_PATH}"
 
 # Create the .env file
-ssh "${USER}@${HOST}" "printf 'DATALAND_API_KEY=${DATALAND_API_KEY}' > ${REMOTE_PATH}/.env"
+ssh "${USER}@${HOST}" "printf 'DATALAND_API_KEY=${DATALAND_API_KEY}\nDATALAND_MCP_TAG=${DATALAND_MCP_TAG}' > ${REMOTE_PATH}/.env"
 ssh "${USER}@${HOST}" "chmod 600 ${REMOTE_PATH}/.env"
 
 # Copy the docker-compose.yml file
 scp docker-compose.yml "${USER}@${HOST}:${REMOTE_PATH}/docker-compose.yml"
 
 # Change to working directory and start DatalandMCP service
-ssh "${USER}@${HOST}" "cd ${REMOTE_PATH} && sudo docker compose --profile mcp up -d"
+ssh "${USER}@${HOST}" "cd ${REMOTE_PATH} && sudo docker compose --profile mcp up -d"  
