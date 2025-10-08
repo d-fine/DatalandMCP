@@ -77,11 +77,23 @@ docker volume rm <volume-name1> <volume_name2>
 
 ### Configure LibreChat
 
-LibreChat can be configured via a `librechat.yaml` file in the project root. The following steps illustrate how to connect an Azure OpenAI model to LibreChat.
-
-The DatalandMCP server is already configured and LibreChat expects the server to run on port 8001.
+LibreChat can be configured via a `librechat.yaml` file in the project root. 
 
 **Note**: A separate file `.env.librechat` contains the environment variables needed for LibreChat. They do not contain private secrets and do not need to be modified.
+
+The DatalandMCP server is already configured in LibreChat which expects the server to run on port 8001.
+Using other ports will require to amend the port also in the `librechat.yaml` file.
+
+```yaml
+# DatalandMCP Server Connection
+mcpServers:
+  Dataland:
+    type: http
+    url: http://host.docker.internal:8001/mcp
+    timeout: 60000
+```
+
+The following steps illustrate how to connect an Azure OpenAI model to LibreChat.
 
 1. **Stop running services**:
    ```bash
