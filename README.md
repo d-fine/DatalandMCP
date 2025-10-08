@@ -57,6 +57,8 @@ There are three different profiles to only launch and stop specific services. Th
 | `librechat` |      ❌      |     ✅     |
 | `all`       |      ✅      |     ✅     |
 
+**Note**: The startup option `librechat` is to be used if an instance of the MCP server is deployed on a remote machine and the user only wants to run LibreChat locally.
+
 #### Docker Volumes (User data, configurations, ...)
 
 LibreChat stores specific data (e.g. user accounts) in volumes that are preserved between service restarts.
@@ -97,7 +99,7 @@ The following steps illustrate how to connect an Azure OpenAI model to LibreChat
 
 1. **Stop running services**:
    ```bash
-   docker compose --profile librechat down
+   docker compose --profile all down
    ```
 
 2. **Add API key**: Add the `API_KEY` of the deployed model to the `.env` file:
@@ -148,7 +150,7 @@ The following steps illustrate how to connect an Azure OpenAI model to LibreChat
 
 5. **Start the services**:
    ```bash
-   ./deployment/local_deployment.sh --profile librechat
+   ./deployment/local_deployment.sh --profile all
    ```
    **Note**: Initially, LibreChat may report that the connection to the MCP server has failed. This occurs because the LibreChat service starts more quickly than the DatalandMCP service; hence, the MCP server might not yet be running. As soon as the server is running, LibreChat will connect without requiring a restart.
    
