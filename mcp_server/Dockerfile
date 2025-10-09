@@ -13,8 +13,10 @@ RUN apk add --no-cache \
     git \
     py3-pip \
     python3 \
-    sed \
- && python3 -m pip install --break-system-packages pdm # Install PDM
+    sed
+
+# Install PDM
+RUN python3 -m pip install --break-system-packages pdm
 
 # Copy project files
 COPY pyproject.toml /app/
