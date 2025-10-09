@@ -6,17 +6,15 @@ WORKDIR /app
 
 # Install Python 3.13 and other dependencies (Java already included in base image)
 RUN apk add --no-cache \
-    git \
+    bash \
     build-base \
     curl \
-    sed \
+    dos2unix \
+    git \
     python3 \
     py3-pip \
-    bash \
-    dos2unix
-
-# Install PDM
-RUN python3 -m pip install --break-system-packages pdm
+    sed \
+    && python3 -m pip install --break-system-packages pdm # Install PDM
 
 # Copy project files
 COPY pyproject.toml /app/
