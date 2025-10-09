@@ -6,14 +6,14 @@ WORKDIR /app
 
 # Install Python 3.13 and other dependencies (Java already included in base image)
 RUN apk add --no-cache \
-    git \
+    bash \
     build-base \
     curl \
-    sed \
-    python3 \
+    dos2unix \
+    git \
     py3-pip \
-    bash \
-    dos2unix
+    python3 \
+    sed
 
 # Install PDM
 RUN python3 -m pip install --break-system-packages pdm
