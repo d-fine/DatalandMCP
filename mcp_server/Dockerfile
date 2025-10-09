@@ -11,10 +11,10 @@ RUN apk add --no-cache \
     curl \
     dos2unix \
     git \
-    python3 \
     py3-pip \
+    python3 \
     sed \
-    && python3 -m pip install --break-system-packages pdm # Install PDM
+ && python3 -m pip install --break-system-packages pdm # Install PDM
 
 # Copy project files
 COPY pyproject.toml /app/
