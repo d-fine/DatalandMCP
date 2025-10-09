@@ -15,6 +15,7 @@ Additionally, the open-source chat client [LibreChat](https://www.librechat.ai/)
 ## Prerequisites
 - Have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed
 - Create a personal account on https://dataland.com and https://test.dataland.com
+- Clone this repository locally
 
 ## Quick Start with Docker Compose
 
